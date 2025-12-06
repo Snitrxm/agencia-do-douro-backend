@@ -10,8 +10,10 @@ import {
   IsBoolean,
   IsArray,
   IsInt,
+  ValidateNested,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
+import { ImageSectionDto } from './image-section.dto';
 
 export class CreatePropertyDto {
   @IsString({ message: 'O título deve ser uma string' })
@@ -161,22 +163,9 @@ export class CreatePropertyDto {
   @IsOptional()
   longitude?: number;
 
-  @Transform(({ value }) => {
-    if (!value) return [];
-    if (Array.isArray(value)) return value;
-    if (typeof value === 'string') {
-      try {
-        return JSON.parse(value);
-      } catch {
-        return [value];
-      }
-    }
-    return [];
-  })
-  @IsArray({ message: 'As imagens devem ser um array' })
-  @IsString({ each: true, message: 'Cada imagem deve ser uma string (URL)' })
+  @IsString({ message: 'A imagem principal deve ser uma string (URL)' })
   @IsOptional()
-  images?: string[];
+  image?: string;
 
   @IsString({ message: 'As condições de pagamento devem ser uma string' })
   @IsOptional()
@@ -208,4 +197,22 @@ export class CreatePropertyDto {
     message: 'O status deve ser: active, inactive, sold ou rented',
   })
   status?: string;
+
+  @Transform(({ value }) => {
+    if (!value) return [];
+    if (Array.isArray(value)) return value;
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  })
+  @IsArray({ message: 'As seções de imagens devem ser um array' })
+  @ValidateNested({ each: true })
+  @Type(() => ImageSectionDto)
+  @IsOptional()
+  imageSections?: ImageSectionDto[];
 }

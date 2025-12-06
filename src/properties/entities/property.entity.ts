@@ -4,7 +4,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { PropertyImageSection } from './property-image-section.entity';
 
 @Entity('properties')
 export class Property {
@@ -19,7 +21,7 @@ export class Property {
 
   @Column({
     type: 'enum',
-    enum: ['comprar', 'arrender', 'vender'],
+    enum: ['comprar', 'arrendar', 'vender'],
     default: 'comprar',
   })
   transactionType: string;
@@ -86,8 +88,8 @@ export class Property {
   @Column({ type: 'varchar', length: 255, nullable: true })
   address: string;
 
-  @Column({ type: 'json', nullable: true })
-  images: string[];
+  @Column({ type: 'varchar', nullable: false })
+  image: string;
 
   @Column({ type: 'text', nullable: true })
   paymentConditions: string;
@@ -104,6 +106,13 @@ export class Property {
 
   @Column({ type: 'boolean', default: false })
   isFeatured: boolean;
+
+  @OneToMany(
+    () => PropertyImageSection,
+    (imageSection) => imageSection.property,
+    { cascade: true },
+  )
+  imageSections: PropertyImageSection[];
 
   @CreateDateColumn()
   createdAt: Date;

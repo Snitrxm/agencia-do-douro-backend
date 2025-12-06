@@ -148,7 +148,7 @@ async function bootstrap() {
       title: 'Apartamento T2 para Arrendar',
       description:
         'Apartamento T2 disponível para arrendamento em zona central, próximo a metro e universidades.',
-      transactionType: 'arrender',
+      transactionType: 'arrendar',
       propertyType: 'Apartamento',
       isEmpreendimento: false,
       propertyState: 'usado',
@@ -226,7 +226,7 @@ async function bootstrap() {
       title: 'Estúdio Mobilado Centro',
       description:
         'Estúdio totalmente mobilado e equipado no centro da cidade, ideal para estudantes ou profissionais.',
-      transactionType: 'arrender',
+      transactionType: 'arrendar',
       propertyType: 'Apartamento',
       isEmpreendimento: false,
       propertyState: 'usado',
@@ -278,7 +278,7 @@ async function bootstrap() {
       title: 'Apartamento T2 Renovado',
       description:
         'Apartamento T2 recentemente renovado, com cozinha equipada e ar condicionado em todos os quartos.',
-      transactionType: 'arrender',
+      transactionType: 'arrendar',
       propertyType: 'Apartamento',
       isEmpreendimento: false,
       propertyState: 'renovado',
@@ -347,7 +347,8 @@ async function bootstrap() {
       constructionYear: 2019,
       distrito: 'Porto',
       concelho: 'Porto',
-      address: 'Praça de Mouzinho de Albuquerque, 90, Penthouse, Rotunda da Boavista',
+      address:
+        'Praça de Mouzinho de Albuquerque, 90, Penthouse, Rotunda da Boavista',
       images: ['https://exemplo.com/apt6-1.jpg'],
       status: 'active',
     },
@@ -382,7 +383,7 @@ async function bootstrap() {
       title: 'Apartamento T3 Novo Próximo Universidade',
       description:
         'Apartamento T3 novo, próximo à Universidade do Porto, ideal para arrendamento a estudantes.',
-      transactionType: 'arrender',
+      transactionType: 'arrendar',
       propertyType: 'Apartamento',
       isEmpreendimento: false,
       propertyState: 'novo',

@@ -9,8 +9,10 @@ import {
   IsBoolean,
   IsArray,
   IsInt,
+  ValidateNested,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
+import { ImageSectionDto } from './image-section.dto';
 
 export class UpdatePropertyDto {
   @IsString()
@@ -29,13 +31,12 @@ export class UpdatePropertyDto {
 
   @IsString({ message: 'A descrição deve ser uma string' })
   @IsOptional()
-  @MinLength(10, { message: 'A descrição deve ter no mínimo 10 caracteres' })
   description?: string;
 
   @IsString({ message: 'O tipo de transação deve ser uma string' })
   @IsOptional()
-  @IsEnum(['comprar', 'arrender', 'vender'], {
-    message: 'O tipo de transação deve ser: comprar, arrender ou vender',
+  @IsEnum(['comprar', 'arrendar', 'vender'], {
+    message: 'O tipo de transação deve ser: comprar, arrendar ou vender',
   })
   transactionType?: string;
 
@@ -169,21 +170,13 @@ export class UpdatePropertyDto {
   @IsOptional()
   longitude?: number;
 
-  @IsArray({ message: 'As imagens devem ser um array' })
-  @IsString({ each: true, message: 'Cada imagem deve ser uma string (URL)' })
+  @IsString({ message: 'A imagem principal deve ser uma string (URL)' })
   @IsOptional()
-  images?: string[];
+  image?: string;
 
   @IsString({ message: 'As condições de pagamento devem ser uma string' })
   @IsOptional()
   paymentConditions?: string;
-
-  @IsArray()
-  @IsString({
-    each: true,
-  })
-  @IsOptional()
-  imagesToRemove?: string[];
 
   @IsString({ message: 'O status deve ser uma string' })
   @IsOptional()
@@ -191,4 +184,22 @@ export class UpdatePropertyDto {
     message: 'O status deve ser: active, inactive, sold ou rented',
   })
   status?: string;
+
+  @Transform(({ value }) => {
+    if (!value) return [];
+    if (Array.isArray(value)) return value;
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  })
+  @IsArray({ message: 'As seções de imagens devem ser um array' })
+  @ValidateNested({ each: true })
+  @Type(() => ImageSectionDto)
+  @IsOptional()
+  imageSections?: ImageSectionDto[];
 }

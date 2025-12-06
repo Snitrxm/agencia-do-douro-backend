@@ -5,7 +5,9 @@
       "Bash(pnpm run:*)",
       "Bash(pnpm remove:*)",
       "Bash(mv:*)",
-      "Bash(npx ts-node:*)"
+      "Bash(npx ts-node:*)",
+      "Bash(docker login:*)",
+      "Bash(docker buildx build:*)"
     ],
     "deny": [],
     "ask": []

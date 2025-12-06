@@ -2,16 +2,23 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Property } from './entities/property.entity';
+import { PropertyImageSection } from './entities/property-image-section.entity';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { FilterPropertyDto } from './dto/filter-property.dto';
 import { UploadService } from '../upload/upload.service';
+import {
+  CreateImageSectionDto,
+  UpdateImageSectionDto,
+} from './dto/image-section.dto';
 
 @Injectable()
 export class PropertiesService {
   constructor(
     @InjectRepository(Property)
     private propertyRepository: Repository<Property>,
+    @InjectRepository(PropertyImageSection)
+    private imageSectionRepository: Repository<PropertyImageSection>,
     private uploadService: UploadService,
   ) {}
 
@@ -217,7 +224,15 @@ export class PropertiesService {
   }
 
   async findOne(id: string): Promise<Property | null> {
-    return this.propertyRepository.findOne({ where: { id } });
+    return this.propertyRepository.findOne({
+      where: { id },
+      relations: ['imageSections'],
+      order: {
+        imageSections: {
+          displayOrder: 'ASC',
+        },
+      },
+    });
   }
 
   async findFeatured(): Promise<Property[]> {
@@ -256,7 +271,7 @@ export class PropertiesService {
   async update(
     id: string,
     updatePropertyDto: UpdatePropertyDto,
-    imagesToAdd?: Express.Multer.File[],
+    newImage?: Express.Multer.File[],
   ): Promise<Property | null> {
     const property = await this.findOne(id);
 
@@ -264,15 +279,97 @@ export class PropertiesService {
       return null;
     }
 
-    let updatedImages = property.images || [];
+    // Se uma nova imagem foi enviada, deletar a antiga e fazer upload da nova
+    if (newImage && newImage.length > 0) {
+      // Deletar a imagem antiga do Cloudinary se existir
+      if (property.image) {
+        const publicId = this.extractPublicIdFromUrl(property.image);
+        if (publicId) {
+          try {
+            await this.uploadService.deleteImage(publicId);
+          } catch (error) {
+            console.error(
+              `Erro ao deletar imagem antiga do Cloudinary: ${publicId}`,
+              error,
+            );
+          }
+        }
+      }
 
-    // Remove as imagens especificadas em imagesToRemove
+      // Upload da nova imagem
+      try {
+        const uploadedUrls =
+          await this.uploadService.uploadMultipleImages(newImage);
+        updatePropertyDto.image = uploadedUrls[0];
+      } catch (error) {
+        console.error('Erro ao fazer upload da nova imagem:', error);
+        throw error;
+      }
+    }
+
+    await this.propertyRepository.update(id, updatePropertyDto);
+
+    return this.findOne(id);
+  }
+
+  async remove(id: string): Promise<Property | null> {
+    const property = await this.findOne(id);
+    if (property) {
+      await this.propertyRepository.remove(property);
+    }
+    return property;
+  }
+
+  // Métodos para gerenciar seções de imagens
+  async createImageSection(
+    propertyId: string,
+    createImageSectionDto: CreateImageSectionDto,
+    images?: Express.Multer.File[],
+  ): Promise<PropertyImageSection | null> {
+    const property = await this.findOne(propertyId);
+    if (!property) {
+      return null;
+    }
+
+    let imageUrls: string[] = createImageSectionDto.images || [];
+
+    if (images && images.length > 0) {
+      const uploadedUrls =
+        await this.uploadService.uploadMultipleImages(images);
+      imageUrls = [...imageUrls, ...uploadedUrls];
+    }
+
+    const imageSection = this.imageSectionRepository.create({
+      propertyId,
+      sectionName: createImageSectionDto.sectionName,
+      images: imageUrls,
+      displayOrder: createImageSectionDto.displayOrder || 0,
+    });
+
+    return this.imageSectionRepository.save(imageSection);
+  }
+
+  async updateImageSection(
+    sectionId: string,
+    updateImageSectionDto: UpdateImageSectionDto,
+    imagesToAdd?: Express.Multer.File[],
+  ): Promise<PropertyImageSection | null> {
+    const section = await this.imageSectionRepository.findOne({
+      where: { id: sectionId },
+    });
+
+    if (!section) {
+      return null;
+    }
+
+    let updatedImages = section.images || [];
+
+    // Remove imagens especificadas
     if (
-      updatePropertyDto.imagesToRemove &&
-      updatePropertyDto.imagesToRemove.length > 0
+      updateImageSectionDto.imagesToRemove &&
+      updateImageSectionDto.imagesToRemove.length > 0
     ) {
-      // Deleta as imagens do Cloudinary
-      const deletePromises = updatePropertyDto.imagesToRemove.map(
+      const deletePromises = updateImageSectionDto.imagesToRemove.map(
         async (imageUrl) => {
           const publicId = this.extractPublicIdFromUrl(imageUrl);
           if (publicId) {
@@ -283,7 +380,6 @@ export class PropertiesService {
                 `Erro ao deletar imagem do Cloudinary: ${publicId}`,
                 error,
               );
-              // Continua mesmo se falhar ao deletar uma imagem
             }
           }
         },
@@ -291,13 +387,17 @@ export class PropertiesService {
 
       await Promise.all(deletePromises);
 
-      // Remove as URLs do array de imagens
       updatedImages = updatedImages.filter(
-        (imageUrl) => !updatePropertyDto?.imagesToRemove?.includes(imageUrl),
+        (imageUrl) => !updateImageSectionDto.imagesToRemove?.includes(imageUrl),
       );
     }
 
-    // Adiciona as novas imagens
+    // Adiciona novas imagens do array de URLs
+    if (updateImageSectionDto.images && updateImageSectionDto.images.length > 0) {
+      updatedImages = [...updatedImages, ...updateImageSectionDto.images];
+    }
+
+    // Faz upload das novas imagens
     if (imagesToAdd && imagesToAdd.length > 0) {
       try {
         const newImageUrls =
@@ -309,22 +409,58 @@ export class PropertiesService {
       }
     }
 
-    // Atualiza o DTO com o array de imagens atualizado
-    updatePropertyDto.images = updatedImages;
+    // Atualiza a seção
+    if (updateImageSectionDto.sectionName) {
+      section.sectionName = updateImageSectionDto.sectionName;
+    }
 
-    // Remove o campo imagesToRemove antes de salvar
-    const { imagesToRemove, ...dataToUpdate } = updatePropertyDto;
+    if (updateImageSectionDto.displayOrder !== undefined) {
+      section.displayOrder = updateImageSectionDto.displayOrder;
+    }
 
-    await this.propertyRepository.update(id, dataToUpdate);
+    section.images = updatedImages;
 
-    return this.findOne(id);
+    return this.imageSectionRepository.save(section);
   }
 
-  async remove(id: string): Promise<Property | null> {
-    const property = await this.findOne(id);
-    if (property) {
-      await this.propertyRepository.remove(property);
+  async deleteImageSection(sectionId: string): Promise<PropertyImageSection | null> {
+    const section = await this.imageSectionRepository.findOne({
+      where: { id: sectionId },
+    });
+
+    if (!section) {
+      return null;
     }
-    return property;
+
+    // Deleta todas as imagens do Cloudinary
+    if (section.images && section.images.length > 0) {
+      const deletePromises = section.images.map(async (imageUrl) => {
+        const publicId = this.extractPublicIdFromUrl(imageUrl);
+        if (publicId) {
+          try {
+            await this.uploadService.deleteImage(publicId);
+          } catch (error) {
+            console.error(
+              `Erro ao deletar imagem do Cloudinary: ${publicId}`,
+              error,
+            );
+          }
+        }
+      });
+
+      await Promise.all(deletePromises);
+    }
+
+    await this.imageSectionRepository.remove(section);
+    return section;
+  }
+
+  async getPropertyImageSections(
+    propertyId: string,
+  ): Promise<PropertyImageSection[]> {
+    return this.imageSectionRepository.find({
+      where: { propertyId },
+      order: { displayOrder: 'ASC' },
+    });
   }
 }

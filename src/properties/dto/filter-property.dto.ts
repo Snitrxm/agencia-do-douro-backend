@@ -32,8 +32,8 @@ export class FilterPropertyDto {
   // Filtro de tipo de transação
   @IsString({ message: 'O tipo de transação deve ser uma string' })
   @IsOptional()
-  @IsEnum(['comprar', 'arrender', 'vender'], {
-    message: 'O tipo de transação deve ser: comprar, arrender ou vender',
+  @IsEnum(['comprar', 'arrendar', 'vender'], {
+    message: 'O tipo de transação deve ser: comprar, arrendar ou vender',
   })
   transactionType?: string;
 
