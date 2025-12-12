@@ -13,6 +13,9 @@ export class Property {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  reference: string;
+
   @Column({ type: 'varchar', length: 255 })
   title: string;
 

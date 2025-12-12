@@ -16,6 +16,11 @@ import { Type, Transform } from 'class-transformer';
 import { ImageSectionDto } from './image-section.dto';
 
 export class CreatePropertyDto {
+  @IsString({ message: 'A referência deve ser uma string' })
+  @IsOptional()
+  @MaxLength(50, { message: 'A referência deve ter no máximo 50 caracteres' })
+  reference?: string;
+
   @IsString({ message: 'O título deve ser uma string' })
   @IsNotEmpty({ message: 'O título é obrigatório' })
   @MinLength(3, { message: 'O título deve ter no mínimo 3 caracteres' })
