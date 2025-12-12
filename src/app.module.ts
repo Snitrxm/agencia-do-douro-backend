@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PropertiesModule } from './properties/properties.module';
 import { UploadModule } from './upload/upload.module';
+import { NewslettersModule } from './newsletters/newsletters.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UploadModule } from './upload/upload.module';
     }),
     PropertiesModule,
     UploadModule,
+    NewslettersModule,
   ],
   controllers: [],
   providers: [],
