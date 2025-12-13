@@ -47,7 +47,7 @@ export class NewslettersController {
 
     const result = await this.uploadService.uploadImage(image);
     return {
-      url: result.secure_url,
+      url: result.url,
     };
   }
 

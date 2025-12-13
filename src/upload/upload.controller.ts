@@ -37,8 +37,8 @@ export class UploadController {
 
     const result = await this.uploadService.uploadImage(file);
     return {
-      url: result.secure_url,
-      publicId: result.public_id,
+      url: result.url,
+      filename: result.filename,
       format: result.format,
       width: result.width,
       height: result.height,

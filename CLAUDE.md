@@ -14,7 +14,7 @@ This is a NestJS backend application for Agência do Douro. The project is curre
 - **Language**: TypeScript (ES2023 target)
 - **Testing**: Jest for unit tests, Supertest for e2e tests
 - **Linting**: ESLint with Prettier integration
-- **File Upload**: Cloudinary for image storage
+- **File Upload**: Local disk storage with Sharp for image processing
 
 ## Development Commands
 
@@ -114,3 +114,42 @@ DATABASE_URL=mysql://root:mypassword@localhost:3306/agencia_douro
 - For production, use migrations instead: `npm run migration:generate -- -n MigrationName`
 - The charset is set to `utf8mb4` to support emoji and special characters
 - Timezone is set to UTC ('Z')
+
+### File Upload Configuration
+This project uses local disk storage for images with Sharp for processing:
+- **Storage**: Images are saved to local disk in the `uploads/images` directory
+- **Processing**: Sharp library automatically resizes images to max 1920x1080 and converts to WebP format
+- **Quality**: WebP compression at 85% quality for optimal file size
+- **Static files**: Served via Express static middleware at `/uploads` path
+
+#### Environment Variables
+```
+UPLOAD_DIR=uploads/images
+BASE_URL=http://localhost:3008
+```
+
+In production (VPS Ubuntu), update `BASE_URL` to your domain:
+```
+BASE_URL=https://api.yourdomain.com
+```
+
+#### Production Setup
+1. Ensure the upload directory exists and has proper permissions:
+```bash
+mkdir -p uploads/images
+chmod 755 uploads/images
+```
+
+2. For NGINX reverse proxy, ensure it passes through the `/uploads` path:
+```nginx
+location /uploads {
+    alias /path/to/app/uploads;
+}
+```
+
+3. Consider setting up regular backups of the `uploads/` directory
+
+#### API Endpoints
+- `POST /upload/image` - Upload single image (max 5MB)
+- `POST /upload/images` - Upload multiple images (max 10 files, 5MB each)
+- Supported formats: JPG, JPEG, PNG, GIF, WebP (automatically converted to WebP)
