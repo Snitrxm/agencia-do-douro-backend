@@ -1,15 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Newsletter } from './entities/newsletter.entity';
 import { CreateNewsletterDto } from './dto/create-newsletter.dto';
 import { UpdateNewsletterDto } from './dto/update-newsletter.dto';
+import { Property } from '../properties/entities/property.entity';
 
 @Injectable()
 export class NewslettersService {
   constructor(
     @InjectRepository(Newsletter)
     private newsletterRepository: Repository<Newsletter>,
+    @InjectRepository(Property)
+    private propertyRepository: Repository<Property>,
   ) {}
 
   private calculateReadingTime(content: string): number {
@@ -36,10 +39,22 @@ export class NewslettersService {
       createNewsletterDto.content,
     );
 
+    // Busca os imóveis se IDs foram fornecidos
+    let properties: Property[] = [];
+    if (createNewsletterDto.propertyIds && createNewsletterDto.propertyIds.length > 0) {
+      properties = await this.propertyRepository.find({
+        where: { id: In(createNewsletterDto.propertyIds) },
+      });
+    }
+
     // Cria a newsletter
     const newsletter = this.newsletterRepository.create({
-      ...createNewsletterDto,
+      title: createNewsletterDto.title,
+      content: createNewsletterDto.content,
+      category: createNewsletterDto.category,
+      coverImage: createNewsletterDto.coverImage,
       readingTime,
+      properties,
     });
 
     return this.newsletterRepository.save(newsletter);
@@ -47,6 +62,7 @@ export class NewslettersService {
 
   async findAll(): Promise<Newsletter[]> {
     return this.newsletterRepository.find({
+      relations: ['properties'],
       order: {
         createdAt: 'DESC',
       },
@@ -56,6 +72,7 @@ export class NewslettersService {
   async findOne(id: string): Promise<Newsletter> {
     const newsletter = await this.newsletterRepository.findOne({
       where: { id },
+      relations: ['properties'],
     });
 
     if (!newsletter) {
@@ -71,8 +88,30 @@ export class NewslettersService {
   ): Promise<Newsletter> {
     const newsletter = await this.findOne(id);
 
+    // Atualiza os imóveis se IDs foram fornecidos
+    if (updateNewsletterDto.propertyIds !== undefined) {
+      if (updateNewsletterDto.propertyIds.length > 0) {
+        newsletter.properties = await this.propertyRepository.find({
+          where: { id: In(updateNewsletterDto.propertyIds) },
+        });
+      } else {
+        newsletter.properties = [];
+      }
+    }
+
     // Atualiza os campos
-    Object.assign(newsletter, updateNewsletterDto);
+    if (updateNewsletterDto.title !== undefined) {
+      newsletter.title = updateNewsletterDto.title;
+    }
+    if (updateNewsletterDto.content !== undefined) {
+      newsletter.content = updateNewsletterDto.content;
+    }
+    if (updateNewsletterDto.category !== undefined) {
+      newsletter.category = updateNewsletterDto.category;
+    }
+    if (updateNewsletterDto.coverImage !== undefined) {
+      newsletter.coverImage = updateNewsletterDto.coverImage;
+    }
 
     // Recalcula o tempo de leitura se o conteúdo foi alterado
     if (

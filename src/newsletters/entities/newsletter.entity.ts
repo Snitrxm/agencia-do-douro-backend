@@ -4,7 +4,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
+import { Property } from '../../properties/entities/property.entity';
 
 @Entity('newsletters')
 export class Newsletter {
@@ -25,6 +28,14 @@ export class Newsletter {
 
   @Column({ type: 'varchar', length: 500, nullable: true })
   coverImage: string;
+
+  @ManyToMany(() => Property)
+  @JoinTable({
+    name: 'newsletter_properties',
+    joinColumn: { name: 'newsletter_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'property_id', referencedColumnName: 'id' },
+  })
+  properties: Property[];
 
   @CreateDateColumn()
   createdAt: Date;

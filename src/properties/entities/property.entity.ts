@@ -5,8 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToMany,
 } from 'typeorm';
 import { PropertyImageSection } from './property-image-section.entity';
+import { Newsletter } from '../../newsletters/entities/newsletter.entity';
 
 @Entity('properties')
 export class Property {
@@ -116,6 +118,9 @@ export class Property {
     { cascade: true },
   )
   imageSections: PropertyImageSection[];
+
+  @ManyToMany(() => Newsletter, (newsletter) => newsletter.properties)
+  newsletters: Newsletter[];
 
   @CreateDateColumn()
   createdAt: Date;

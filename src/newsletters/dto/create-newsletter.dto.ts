@@ -4,6 +4,8 @@ import {
   MinLength,
   MaxLength,
   IsOptional,
+  IsArray,
+  IsUUID,
 } from 'class-validator';
 
 export class CreateNewsletterDto {
@@ -26,4 +28,9 @@ export class CreateNewsletterDto {
   @IsString({ message: 'A imagem de capa deve ser uma string' })
   @MaxLength(500, { message: 'A URL da imagem deve ter no máximo 500 caracteres' })
   coverImage?: string;
+
+  @IsOptional()
+  @IsArray({ message: 'Os imóveis devem ser um array' })
+  @IsUUID('4', { each: true, message: 'Cada ID de imóvel deve ser um UUID válido' })
+  propertyIds?: string[];
 }
