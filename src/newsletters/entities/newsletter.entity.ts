@@ -23,6 +23,9 @@ export class Newsletter {
   @Column({ type: 'int', unsigned: true })
   readingTime: number;
 
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  coverImage: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
