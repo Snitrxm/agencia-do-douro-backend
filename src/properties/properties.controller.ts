@@ -33,7 +33,7 @@ export class PropertiesController {
   @Post()
   @UseInterceptors(
     FilesInterceptor('image', 1, {
-      limits: { fileSize: 5 * 1024 * 1024 },
+      limits: { fileSize: 200 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
           return cb(
@@ -91,7 +91,7 @@ export class PropertiesController {
   @Patch(':id')
   @UseInterceptors(
     FilesInterceptor('image', 1, {
-      limits: { fileSize: 5 * 1024 * 1024 },
+      limits: { fileSize: 200 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
           return cb(
@@ -127,7 +127,7 @@ export class PropertiesController {
   @Post(':id/image-sections')
   @UseInterceptors(
     FilesInterceptor('images', 10, {
-      limits: { fileSize: 5 * 1024 * 1024 },
+      limits: { fileSize: 200 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
           return cb(
@@ -164,7 +164,7 @@ export class PropertiesController {
   @Patch('image-sections/:sectionId')
   @UseInterceptors(
     FilesInterceptor('imagesToAdd', 10, {
-      limits: { fileSize: 5 * 1024 * 1024 },
+      limits: { fileSize: 200 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
           return cb(

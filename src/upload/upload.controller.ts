@@ -16,7 +16,7 @@ export class UploadController {
   @Post('image')
   @UseInterceptors(
     FileInterceptor('file', {
-      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+      limits: { fileSize: 200 * 1024 * 1024 }, // 200MB
       fileFilter: (_req, file, cb) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
           return cb(
@@ -48,7 +48,7 @@ export class UploadController {
   @Post('images')
   @UseInterceptors(
     FilesInterceptor('files', 10, {
-      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB por arquivo
+      limits: { fileSize: 200 * 1024 * 1024 }, // 200MB por arquivo
       fileFilter: (_req, file, cb) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
           return cb(
