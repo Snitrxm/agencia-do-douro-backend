@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PropertiesModule } from './properties/properties.module';
 import { UploadModule } from './upload/upload.module';
 import { NewslettersModule } from './newsletters/newsletters.module';
+import { SiteConfigModule } from './site-config/site-config.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { NewslettersModule } from './newsletters/newsletters.module';
     PropertiesModule,
     UploadModule,
     NewslettersModule,
+    SiteConfigModule,
   ],
   controllers: [],
   providers: [],
