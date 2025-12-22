@@ -28,7 +28,7 @@ export class Property {
 
   @Column({
     type: 'enum',
-    enum: ['comprar', 'arrendar', 'vender'],
+    enum: ['comprar', 'arrendar', 'trespasse'],
     default: 'comprar',
   })
   transactionType: string;
