@@ -141,7 +141,13 @@ export class PropertiesService {
 
     // Filtro de status
     if (status) {
-      queryBuilder.andWhere('property.status = :status', { status });
+      if (status === 'active') {
+        queryBuilder.andWhere('property.status IN (:...status)', {
+          status: ['active', 'reserved'],
+        });
+      } else {
+        queryBuilder.andWhere('property.status = :status', { status });
+      }
     }
 
     // Filtro de empreendimento
