@@ -22,6 +22,8 @@ export class SiteConfigService {
       config = this.siteConfigRepository.create({
         clientesSatisfeitos: 0,
         rating: 0,
+        anosExperiencia: 0,
+        imoveisVendidos: 0,
       });
       await this.siteConfigRepository.save(config);
     }
@@ -40,6 +42,14 @@ export class SiteConfigService {
 
     if (updateSiteConfigDto.rating !== undefined) {
       config.rating = updateSiteConfigDto.rating;
+    }
+
+    if (updateSiteConfigDto.anosExperiencia !== undefined) {
+      config.anosExperiencia = updateSiteConfigDto.anosExperiencia;
+    }
+
+    if (updateSiteConfigDto.imoveisVendidos !== undefined) {
+      config.imoveisVendidos = updateSiteConfigDto.imoveisVendidos;
     }
 
     return this.siteConfigRepository.save(config);

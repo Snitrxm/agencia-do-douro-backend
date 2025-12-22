@@ -17,6 +17,12 @@ export class SiteConfig {
   @Column({ type: 'float', default: 0 })
   rating: number;
 
+  @Column({ type: 'int', default: 0 })
+  anosExperiencia: number;
+
+  @Column({ type: 'int', default: 0 })
+  imoveisVendidos: number;
+
   @CreateDateColumn()
   createdAt: Date;
 
