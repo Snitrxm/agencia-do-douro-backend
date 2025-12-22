@@ -26,11 +26,16 @@ export class CreateNewsletterDto {
 
   @IsOptional()
   @IsString({ message: 'A imagem de capa deve ser uma string' })
-  @MaxLength(500, { message: 'A URL da imagem deve ter no máximo 500 caracteres' })
+  @MaxLength(500, {
+    message: 'A URL da imagem deve ter no máximo 500 caracteres',
+  })
   coverImage?: string;
 
   @IsOptional()
   @IsArray({ message: 'Os imóveis devem ser um array' })
-  @IsUUID('4', { each: true, message: 'Cada ID de imóvel deve ser um UUID válido' })
+  @IsUUID('4', {
+    each: true,
+    message: 'Cada ID de imóvel deve ser um UUID válido',
+  })
   propertyIds?: string[];
 }

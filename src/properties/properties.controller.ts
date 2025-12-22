@@ -21,6 +21,13 @@ import {
   CreateImageSectionDto,
   UpdateImageSectionDto,
 } from './dto/image-section.dto';
+import {
+  AddRelatedPropertiesDto,
+  RemoveRelatedPropertiesDto,
+  SetRelatedPropertiesDto,
+} from './dto/manage-related-properties.dto';
+import { CreatePropertyFileDto } from './dto/create-property-file.dto';
+import { UpdatePropertyFileDto } from './dto/update-property-file.dto';
 import { UploadService } from '../upload/upload.service';
 
 @Controller('properties')
@@ -54,8 +61,7 @@ export class PropertiesController {
     // Upload da imagem principal para o Cloudinary (se houver)
     let imageUrl: string | undefined;
     if (image && image.length > 0) {
-      const uploadedUrls =
-        await this.uploadService.uploadMultipleImages(image);
+      const uploadedUrls = await this.uploadService.uploadMultipleImages(image);
       imageUrl = uploadedUrls[0];
     }
 
@@ -79,8 +85,11 @@ export class PropertiesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.propertiesService.findOne(id);
+  findOne(
+    @Param('id') id: string,
+    @Query('includeRelated') includeRelated?: string,
+  ) {
+    return this.propertiesService.findOne(id, includeRelated === 'true');
   }
 
   @Patch(':id/featured')
@@ -200,8 +209,7 @@ export class PropertiesController {
 
   @Delete('image-sections/:sectionId')
   async deleteImageSection(@Param('sectionId') sectionId: string) {
-    const section =
-      await this.propertiesService.deleteImageSection(sectionId);
+    const section = await this.propertiesService.deleteImageSection(sectionId);
 
     if (!section) {
       throw new NotFoundException(
@@ -212,6 +220,243 @@ export class PropertiesController {
     return {
       message: 'Seção de imagens deletada com sucesso',
       section,
+    };
+  }
+
+  // ==========================================
+  // Endpoints para gerenciar propriedades relacionadas
+  // ==========================================
+
+  /**
+   * GET /properties/:id/related
+   * Busca todas as propriedades relacionadas
+   */
+  @Get(':id/related')
+  async getRelatedProperties(@Param('id') propertyId: string) {
+    return this.propertiesService.getRelatedProperties(propertyId);
+  }
+
+  /**
+   * GET /properties/:id/similar
+   * Busca propriedades similares (sugestões automáticas)
+   */
+  @Get(':id/similar')
+  async findSimilarProperties(
+    @Param('id') propertyId: string,
+    @Query('limit') limit?: string,
+  ) {
+    const limitNumber = limit ? parseInt(limit, 10) : 5;
+    return this.propertiesService.findSimilarProperties(
+      propertyId,
+      limitNumber,
+    );
+  }
+
+  /**
+   * POST /properties/:id/related
+   * Adiciona propriedades relacionadas (mantém existentes)
+   */
+  @Post(':id/related')
+  async addRelatedProperties(
+    @Param('id') propertyId: string,
+    @Body() addRelatedPropertiesDto: AddRelatedPropertiesDto,
+  ) {
+    const property = await this.propertiesService.addRelatedProperties(
+      propertyId,
+      addRelatedPropertiesDto,
+    );
+
+    if (!property) {
+      throw new NotFoundException(
+        `Propriedade com ID ${propertyId} não encontrada`,
+      );
+    }
+
+    return property;
+  }
+
+  /**
+   * DELETE /properties/:id/related
+   * Remove propriedades relacionadas específicas
+   */
+  @Delete(':id/related')
+  async removeRelatedProperties(
+    @Param('id') propertyId: string,
+    @Body() removeRelatedPropertiesDto: RemoveRelatedPropertiesDto,
+  ) {
+    const property = await this.propertiesService.removeRelatedProperties(
+      propertyId,
+      removeRelatedPropertiesDto,
+    );
+
+    if (!property) {
+      throw new NotFoundException(
+        `Propriedade com ID ${propertyId} não encontrada`,
+      );
+    }
+
+    return {
+      message: 'Propriedades relacionadas removidas com sucesso',
+      property,
+    };
+  }
+
+  /**
+   * PATCH /properties/:id/related
+   * Define (substitui) todas as propriedades relacionadas
+   */
+  @Patch(':id/related')
+  async setRelatedProperties(
+    @Param('id') propertyId: string,
+    @Body() setRelatedPropertiesDto: SetRelatedPropertiesDto,
+  ) {
+    const property = await this.propertiesService.setRelatedProperties(
+      propertyId,
+      setRelatedPropertiesDto,
+    );
+
+    if (!property) {
+      throw new NotFoundException(
+        `Propriedade com ID ${propertyId} não encontrada`,
+      );
+    }
+
+    return property;
+  }
+
+  // ==========================================
+  // Endpoints para gerenciar arquivos de propriedades
+  // ==========================================
+
+  /**
+   * GET /properties/:id/files
+   * Lista todos os arquivos de uma propriedade
+   */
+  @Get(':id/files')
+  async getPropertyFiles(@Param('id') propertyId: string) {
+    return this.propertiesService.getPropertyFiles(propertyId);
+  }
+
+  /**
+   * POST /properties/:id/files
+   * Upload de arquivo único
+   */
+  @Post(':id/files')
+  @UseInterceptors(
+    FilesInterceptor('file', 1, {
+      limits: { fileSize: 200 * 1024 * 1024 },
+    }),
+  )
+  async uploadPropertyFile(
+    @Param('id') propertyId: string,
+    @Body() createPropertyFileDto: CreatePropertyFileDto,
+    @UploadedFiles() files?: Express.Multer.File[],
+  ) {
+    if (!files || files.length === 0) {
+      throw new BadRequestException('Nenhum arquivo foi enviado');
+    }
+
+    const propertyFile = await this.propertiesService.createPropertyFile(
+      propertyId,
+      createPropertyFileDto,
+      files[0],
+    );
+
+    if (!propertyFile) {
+      throw new NotFoundException(
+        `Propriedade com ID ${propertyId} não encontrada`,
+      );
+    }
+
+    return propertyFile;
+  }
+
+  /**
+   * POST /properties/:id/files/multiple
+   * Upload de múltiplos arquivos
+   */
+  @Post(':id/files/multiple')
+  @UseInterceptors(
+    FilesInterceptor('files', 20, {
+      limits: { fileSize: 200 * 1024 * 1024 },
+    }),
+  )
+  async uploadMultiplePropertyFiles(
+    @Param('id') propertyId: string,
+    @Body() body: { title?: string; isVisible?: string },
+    @UploadedFiles() files?: Express.Multer.File[],
+  ) {
+    if (!files || files.length === 0) {
+      throw new BadRequestException('Nenhum arquivo foi enviado');
+    }
+
+    const isVisible = body.isVisible === 'false' ? false : true;
+
+    const propertyFiles =
+      await this.propertiesService.uploadMultiplePropertyFiles(
+        propertyId,
+        files,
+        body.title,
+        isVisible,
+      );
+
+    return {
+      message: `${propertyFiles.length} arquivo(s) enviado(s) com sucesso`,
+      files: propertyFiles,
+    };
+  }
+
+  /**
+   * GET /properties/files/:fileId
+   * Busca arquivo específico
+   */
+  @Get('files/:fileId')
+  async getPropertyFile(@Param('fileId') fileId: string) {
+    const file = await this.propertiesService.getPropertyFileById(fileId);
+
+    if (!file) {
+      throw new NotFoundException(`Arquivo com ID ${fileId} não encontrado`);
+    }
+
+    return file;
+  }
+
+  /**
+   * PATCH /properties/files/:fileId
+   * Atualiza metadados do arquivo
+   */
+  @Patch('files/:fileId')
+  async updatePropertyFile(
+    @Param('fileId') fileId: string,
+    @Body() updatePropertyFileDto: UpdatePropertyFileDto,
+  ) {
+    const file = await this.propertiesService.updatePropertyFile(
+      fileId,
+      updatePropertyFileDto,
+    );
+
+    if (!file) {
+      throw new NotFoundException(`Arquivo com ID ${fileId} não encontrado`);
+    }
+
+    return file;
+  }
+
+  /**
+   * DELETE /properties/files/:fileId
+   * Deleta arquivo
+   */
+  @Delete('files/:fileId')
+  async deletePropertyFile(@Param('fileId') fileId: string) {
+    const file = await this.propertiesService.deletePropertyFile(fileId);
+
+    if (!file) {
+      throw new NotFoundException(`Arquivo com ID ${fileId} não encontrado`);
+    }
+
+    return {
+      message: 'Arquivo deletado com sucesso',
+      file,
     };
   }
 }

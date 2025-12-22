@@ -6,8 +6,10 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { PropertyImageSection } from './property-image-section.entity';
+import { PropertyFile } from './property-file.entity';
 import { Newsletter } from '../../newsletters/entities/newsletter.entity';
 
 @Entity('properties')
@@ -121,6 +123,20 @@ export class Property {
 
   @ManyToMany(() => Newsletter, (newsletter) => newsletter.properties)
   newsletters: Newsletter[];
+
+  @ManyToMany(() => Property)
+  @JoinTable({
+    name: 'property_related_properties',
+    joinColumn: { name: 'property_id', referencedColumnName: 'id' },
+    inverseJoinColumn: {
+      name: 'related_property_id',
+      referencedColumnName: 'id',
+    },
+  })
+  relatedProperties: Property[];
+
+  @OneToMany(() => PropertyFile, (file) => file.property, { cascade: true })
+  files: PropertyFile[];
 
   @CreateDateColumn()
   createdAt: Date;

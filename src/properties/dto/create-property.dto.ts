@@ -11,6 +11,7 @@ import {
   IsArray,
   IsInt,
   ValidateNested,
+  IsUUID,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { ImageSectionDto } from './image-section.dto';
@@ -220,4 +221,24 @@ export class CreatePropertyDto {
   @Type(() => ImageSectionDto)
   @IsOptional()
   imageSections?: ImageSectionDto[];
+
+  @Transform(({ value }) => {
+    if (!value) return [];
+    if (Array.isArray(value)) return value;
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  })
+  @IsArray({ message: 'IDs das propriedades relacionadas devem ser um array' })
+  @IsUUID('4', {
+    each: true,
+    message: 'Cada ID de propriedade relacionada deve ser um UUID válido',
+  })
+  @IsOptional()
+  relatedPropertyIds?: string[];
 }

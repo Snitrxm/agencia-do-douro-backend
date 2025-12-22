@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Property } from './entities/property.entity';
 import { PropertyImageSection } from './entities/property-image-section.entity';
+import { PropertyFile } from './entities/property-file.entity';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { FilterPropertyDto } from './dto/filter-property.dto';
@@ -11,19 +12,58 @@ import {
   CreateImageSectionDto,
   UpdateImageSectionDto,
 } from './dto/image-section.dto';
+import {
+  AddRelatedPropertiesDto,
+  RemoveRelatedPropertiesDto,
+  SetRelatedPropertiesDto,
+} from './dto/manage-related-properties.dto';
+import { CreatePropertyFileDto } from './dto/create-property-file.dto';
+import { UpdatePropertyFileDto } from './dto/update-property-file.dto';
 
 @Injectable()
 export class PropertiesService {
+  private readonly logger = new Logger(PropertiesService.name);
+
   constructor(
     @InjectRepository(Property)
     private propertyRepository: Repository<Property>,
     @InjectRepository(PropertyImageSection)
     private imageSectionRepository: Repository<PropertyImageSection>,
+    @InjectRepository(PropertyFile)
+    private propertyFileRepository: Repository<PropertyFile>,
     private uploadService: UploadService,
   ) {}
 
   async create(createPropertyDto: CreatePropertyDto): Promise<Property> {
-    const property = this.propertyRepository.create(createPropertyDto);
+    // Buscar propriedades relacionadas se IDs foram fornecidos
+    let relatedProperties: Property[] = [];
+    if (
+      createPropertyDto.relatedPropertyIds &&
+      createPropertyDto.relatedPropertyIds.length > 0
+    ) {
+      relatedProperties = await this.propertyRepository.find({
+        where: { id: In(createPropertyDto.relatedPropertyIds) },
+      });
+
+      // Validar que todas as propriedades existem
+      if (
+        relatedProperties.length !== createPropertyDto.relatedPropertyIds.length
+      ) {
+        const foundIds = relatedProperties.map((p) => p.id);
+        const notFoundIds = createPropertyDto.relatedPropertyIds.filter(
+          (id) => !foundIds.includes(id),
+        );
+        throw new Error(
+          `Propriedades não encontradas: ${notFoundIds.join(', ')}`,
+        );
+      }
+    }
+
+    const property = this.propertyRepository.create({
+      ...createPropertyDto,
+      relatedProperties,
+    });
+
     return this.propertyRepository.save(property);
   }
 
@@ -223,10 +263,19 @@ export class PropertiesService {
     };
   }
 
-  async findOne(id: string): Promise<Property | null> {
+  async findOne(
+    id: string,
+    includeRelated: boolean = false,
+  ): Promise<Property | null> {
+    const relations = ['imageSections'];
+
+    if (includeRelated) {
+      relations.push('relatedProperties');
+    }
+
     return this.propertyRepository.findOne({
       where: { id },
-      relations: ['imageSections'],
+      relations,
       order: {
         imageSections: {
           displayOrder: 'ASC',
@@ -263,7 +312,7 @@ export class PropertiesService {
       const regex = /\/upload\/(?:v\d+\/)?(.+)\.\w+$/;
       const match = url.match(regex);
       return match ? match[1] : null;
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }
@@ -308,6 +357,42 @@ export class PropertiesService {
     }
 
     await this.propertyRepository.update(id, updatePropertyDto);
+
+    // Atualizar propriedades relacionadas se fornecidas
+    if (updatePropertyDto.relatedPropertyIds !== undefined) {
+      const propertyWithRelations = await this.propertyRepository.findOne({
+        where: { id },
+        relations: ['relatedProperties'],
+      });
+
+      if (propertyWithRelations) {
+        if (updatePropertyDto.relatedPropertyIds.length > 0) {
+          const relatedProperties = await this.propertyRepository.find({
+            where: { id: In(updatePropertyDto.relatedPropertyIds) },
+          });
+
+          // Validar que todas as propriedades existem
+          if (
+            relatedProperties.length !==
+            updatePropertyDto.relatedPropertyIds.length
+          ) {
+            const foundIds = relatedProperties.map((p) => p.id);
+            const notFoundIds = updatePropertyDto.relatedPropertyIds.filter(
+              (id) => !foundIds.includes(id),
+            );
+            throw new Error(
+              `Propriedades não encontradas: ${notFoundIds.join(', ')}`,
+            );
+          }
+
+          propertyWithRelations.relatedProperties = relatedProperties;
+          await this.propertyRepository.save(propertyWithRelations);
+        } else {
+          propertyWithRelations.relatedProperties = [];
+          await this.propertyRepository.save(propertyWithRelations);
+        }
+      }
+    }
 
     return this.findOne(id);
   }
@@ -393,7 +478,10 @@ export class PropertiesService {
     }
 
     // Adiciona novas imagens do array de URLs
-    if (updateImageSectionDto.images && updateImageSectionDto.images.length > 0) {
+    if (
+      updateImageSectionDto.images &&
+      updateImageSectionDto.images.length > 0
+    ) {
       updatedImages = [...updatedImages, ...updateImageSectionDto.images];
     }
 
@@ -423,7 +511,9 @@ export class PropertiesService {
     return this.imageSectionRepository.save(section);
   }
 
-  async deleteImageSection(sectionId: string): Promise<PropertyImageSection | null> {
+  async deleteImageSection(
+    sectionId: string,
+  ): Promise<PropertyImageSection | null> {
     const section = await this.imageSectionRepository.findOne({
       where: { id: sectionId },
     });
@@ -462,5 +552,310 @@ export class PropertiesService {
       where: { propertyId },
       order: { displayOrder: 'ASC' },
     });
+  }
+
+  // ==========================================
+  // Métodos para gerenciar propriedades relacionadas
+  // ==========================================
+
+  /**
+   * Busca as propriedades relacionadas de uma propriedade específica
+   */
+  async getRelatedProperties(propertyId: string): Promise<Property[]> {
+    const property = await this.propertyRepository.findOne({
+      where: { id: propertyId },
+      relations: ['relatedProperties'],
+    });
+
+    if (!property) {
+      return [];
+    }
+
+    return property.relatedProperties || [];
+  }
+
+  /**
+   * Adiciona propriedades relacionadas (mantém as existentes)
+   */
+  async addRelatedProperties(
+    propertyId: string,
+    addRelatedPropertiesDto: AddRelatedPropertiesDto,
+  ): Promise<Property | null> {
+    const property = await this.propertyRepository.findOne({
+      where: { id: propertyId },
+      relations: ['relatedProperties'],
+    });
+
+    if (!property) {
+      return null;
+    }
+
+    // Buscar as novas propriedades relacionadas
+    const newRelatedProperties = await this.propertyRepository.find({
+      where: { id: In(addRelatedPropertiesDto.relatedPropertyIds) },
+    });
+
+    // Validar que todas as propriedades existem
+    if (
+      newRelatedProperties.length !==
+      addRelatedPropertiesDto.relatedPropertyIds.length
+    ) {
+      const foundIds = newRelatedProperties.map((p) => p.id);
+      const notFoundIds = addRelatedPropertiesDto.relatedPropertyIds.filter(
+        (id) => !foundIds.includes(id),
+      );
+      throw new Error(
+        `Propriedades não encontradas: ${notFoundIds.join(', ')}`,
+      );
+    }
+
+    // Validar que não está adicionando a si mesma
+    if (newRelatedProperties.some((p) => p.id === propertyId)) {
+      throw new Error('Uma propriedade não pode ser relacionada a si mesma');
+    }
+
+    // Combinar propriedades existentes com novas (evitar duplicatas)
+    const existingIds = property.relatedProperties?.map((p) => p.id) || [];
+    const uniqueNewProperties = newRelatedProperties.filter(
+      (p) => !existingIds.includes(p.id),
+    );
+
+    property.relatedProperties = [
+      ...(property.relatedProperties || []),
+      ...uniqueNewProperties,
+    ];
+
+    return this.propertyRepository.save(property);
+  }
+
+  /**
+   * Remove propriedades relacionadas específicas
+   */
+  async removeRelatedProperties(
+    propertyId: string,
+    removeRelatedPropertiesDto: RemoveRelatedPropertiesDto,
+  ): Promise<Property | null> {
+    const property = await this.propertyRepository.findOne({
+      where: { id: propertyId },
+      relations: ['relatedProperties'],
+    });
+
+    if (!property) {
+      return null;
+    }
+
+    // Filtrar removendo as propriedades especificadas
+    property.relatedProperties = (property.relatedProperties || []).filter(
+      (p) => !removeRelatedPropertiesDto.relatedPropertyIds.includes(p.id),
+    );
+
+    return this.propertyRepository.save(property);
+  }
+
+  /**
+   * Define (substitui) todas as propriedades relacionadas
+   */
+  async setRelatedProperties(
+    propertyId: string,
+    setRelatedPropertiesDto: SetRelatedPropertiesDto,
+  ): Promise<Property | null> {
+    const property = await this.propertyRepository.findOne({
+      where: { id: propertyId },
+      relations: ['relatedProperties'],
+    });
+
+    if (!property) {
+      return null;
+    }
+
+    // Se array vazio, limpar relacionamentos
+    if (setRelatedPropertiesDto.relatedPropertyIds.length === 0) {
+      property.relatedProperties = [];
+      return this.propertyRepository.save(property);
+    }
+
+    // Buscar as novas propriedades relacionadas
+    const newRelatedProperties = await this.propertyRepository.find({
+      where: { id: In(setRelatedPropertiesDto.relatedPropertyIds) },
+    });
+
+    // Validar que todas as propriedades existem
+    if (
+      newRelatedProperties.length !==
+      setRelatedPropertiesDto.relatedPropertyIds.length
+    ) {
+      const foundIds = newRelatedProperties.map((p) => p.id);
+      const notFoundIds = setRelatedPropertiesDto.relatedPropertyIds.filter(
+        (id) => !foundIds.includes(id),
+      );
+      throw new Error(
+        `Propriedades não encontradas: ${notFoundIds.join(', ')}`,
+      );
+    }
+
+    // Validar que não está adicionando a si mesma
+    if (newRelatedProperties.some((p) => p.id === propertyId)) {
+      throw new Error('Uma propriedade não pode ser relacionada a si mesma');
+    }
+
+    property.relatedProperties = newRelatedProperties;
+
+    return this.propertyRepository.save(property);
+  }
+
+  /**
+   * Busca propriedades similares baseadas em critérios
+   * Útil para sugerir automaticamente propriedades relacionadas
+   */
+  async findSimilarProperties(
+    propertyId: string,
+    limit: number = 5,
+  ): Promise<Property[]> {
+    const property = await this.findOne(propertyId);
+
+    if (!property) {
+      return [];
+    }
+
+    const queryBuilder = this.propertyRepository
+      .createQueryBuilder('property')
+      .where('property.id != :propertyId', { propertyId })
+      .andWhere('property.status = :status', { status: 'active' });
+
+    // Filtros de similaridade
+    // 1. Mesmo tipo de propriedade (peso alto)
+    queryBuilder.andWhere('property.propertyType = :propertyType', {
+      propertyType: property.propertyType,
+    });
+
+    // 2. Mesmo tipo de transação
+    queryBuilder.andWhere('property.transactionType = :transactionType', {
+      transactionType: property.transactionType,
+    });
+
+    // 3. Mesma localização (distrito)
+    queryBuilder.andWhere('property.distrito = :distrito', {
+      distrito: property.distrito,
+    });
+
+    // 4. Preço similar (±30%)
+    const minPrice = property.price * 0.7;
+    const maxPrice = property.price * 1.3;
+    queryBuilder.andWhere('property.price BETWEEN :minPrice AND :maxPrice', {
+      minPrice,
+      maxPrice,
+    });
+
+    // Ordenar por data de criação (mais recentes primeiro)
+    queryBuilder.orderBy('property.createdAt', 'DESC');
+
+    // Limitar resultados
+    queryBuilder.take(limit);
+
+    return queryBuilder.getMany();
+  }
+
+  // ==========================================
+  // Métodos para gerenciar arquivos de propriedades
+  // ==========================================
+
+  async createPropertyFile(
+    propertyId: string,
+    createPropertyFileDto: CreatePropertyFileDto,
+    file: Express.Multer.File,
+  ): Promise<PropertyFile | null> {
+    const property = await this.findOne(propertyId);
+    if (!property) return null;
+
+    const uploadResult = await this.uploadService.uploadFile(file);
+
+    const propertyFile = this.propertyFileRepository.create({
+      propertyId,
+      title: createPropertyFileDto.title || uploadResult.originalName,
+      isVisible: createPropertyFileDto.isVisible ?? true,
+      filename: uploadResult.filename,
+      originalName: uploadResult.originalName,
+      mimeType: uploadResult.mimeType,
+      fileSize: uploadResult.fileSize,
+      filePath: uploadResult.filePath,
+    });
+
+    return this.propertyFileRepository.save(propertyFile);
+  }
+
+  async getPropertyFiles(propertyId: string): Promise<PropertyFile[]> {
+    return this.propertyFileRepository.find({
+      where: { propertyId },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async getPropertyFileById(fileId: string): Promise<PropertyFile | null> {
+    return this.propertyFileRepository.findOne({ where: { id: fileId } });
+  }
+
+  async updatePropertyFile(
+    fileId: string,
+    updatePropertyFileDto: UpdatePropertyFileDto,
+  ): Promise<PropertyFile | null> {
+    const propertyFile = await this.getPropertyFileById(fileId);
+    if (!propertyFile) return null;
+
+    if (updatePropertyFileDto.title !== undefined) {
+      propertyFile.title = updatePropertyFileDto.title;
+    }
+    if (updatePropertyFileDto.isVisible !== undefined) {
+      propertyFile.isVisible = updatePropertyFileDto.isVisible;
+    }
+
+    return this.propertyFileRepository.save(propertyFile);
+  }
+
+  async deletePropertyFile(fileId: string): Promise<PropertyFile | null> {
+    const propertyFile = await this.getPropertyFileById(fileId);
+    if (!propertyFile) return null;
+
+    try {
+      await this.uploadService.deleteFile(propertyFile.filename);
+    } catch (error) {
+      this.logger.error(
+        `Erro ao deletar arquivo físico: ${propertyFile.filename}`,
+        error,
+      );
+    }
+
+    await this.propertyFileRepository.remove(propertyFile);
+    return propertyFile;
+  }
+
+  async uploadMultiplePropertyFiles(
+    propertyId: string,
+    files: Express.Multer.File[],
+    title?: string,
+    isVisible: boolean = true,
+  ): Promise<PropertyFile[]> {
+    const property = await this.findOne(propertyId);
+    if (!property) {
+      throw new Error(`Propriedade com ID ${propertyId} não encontrada`);
+    }
+
+    const uploadPromises = files.map(async (file) => {
+      const uploadResult = await this.uploadService.uploadFile(file);
+
+      const propertyFile = this.propertyFileRepository.create({
+        propertyId,
+        title: title || uploadResult.originalName,
+        isVisible,
+        filename: uploadResult.filename,
+        originalName: uploadResult.originalName,
+        mimeType: uploadResult.mimeType,
+        fileSize: uploadResult.fileSize,
+        filePath: uploadResult.filePath,
+      });
+
+      return this.propertyFileRepository.save(propertyFile);
+    });
+
+    return Promise.all(uploadPromises);
   }
 }

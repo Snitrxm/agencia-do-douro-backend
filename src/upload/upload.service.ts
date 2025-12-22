@@ -13,6 +13,15 @@ export interface UploadResult {
   height: number;
 }
 
+export interface FileUploadResult {
+  url: string;
+  filename: string;
+  originalName: string;
+  mimeType: string;
+  fileSize: number;
+  filePath: string;
+}
+
 @Injectable()
 export class UploadService {
   private readonly logger = new Logger(UploadService.name);
@@ -24,7 +33,10 @@ export class UploadService {
       'UPLOAD_DIR',
       'uploads/images',
     );
-    this.baseUrl = this.configService.get<string>('BASE_URL', 'http://localhost:3008');
+    this.baseUrl = this.configService.get<string>(
+      'BASE_URL',
+      'http://localhost:3008',
+    );
     this.ensureUploadDirExists();
   }
 
@@ -34,6 +46,18 @@ export class UploadService {
     } catch {
       await fs.mkdir(this.uploadDir, { recursive: true });
       this.logger.log(`Created upload directory: ${this.uploadDir}`);
+    }
+
+    // Criar também diretório para arquivos gerais
+    const filesDir = this.configService.get<string>(
+      'UPLOAD_FILES_DIR',
+      'uploads/files',
+    );
+    try {
+      await fs.access(filesDir);
+    } catch {
+      await fs.mkdir(filesDir, { recursive: true });
+      this.logger.log(`Created files directory: ${filesDir}`);
     }
   }
 
@@ -69,7 +93,10 @@ export class UploadService {
         height: metadata.height || 0,
       };
     } catch (error) {
-      this.logger.error(`Failed to upload image: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to upload image: ${error.message}`,
+        error.stack,
+      );
       throw new Error('Falha ao fazer upload da imagem');
     }
   }
@@ -87,8 +114,78 @@ export class UploadService {
       await fs.unlink(filepath);
       this.logger.log(`Image deleted successfully: ${filename}`);
     } catch (error) {
-      this.logger.error(`Failed to delete image: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to delete image: ${error.message}`,
+        error.stack,
+      );
       throw new Error('Falha ao deletar imagem');
+    }
+  }
+
+  // ==========================================
+  // Métodos para upload de arquivos genéricos
+  // ==========================================
+
+  async uploadFile(file: Express.Multer.File): Promise<FileUploadResult> {
+    const fileExt = path.extname(file.originalname);
+    const filename = `${uuidv4()}${fileExt}`;
+    const uploadDir = this.configService.get<string>(
+      'UPLOAD_FILES_DIR',
+      'uploads/files',
+    );
+    const filepath = path.join(uploadDir, filename);
+
+    try {
+      // Garantir que o diretório existe
+      await fs
+        .access(uploadDir)
+        .catch(() => fs.mkdir(uploadDir, { recursive: true }));
+
+      // Salvar arquivo no disco (sem processamento)
+      await fs.writeFile(filepath, file.buffer);
+
+      const url = `${this.baseUrl}/uploads/files/${filename}`;
+
+      this.logger.log(`Arquivo enviado com sucesso: ${filename}`);
+
+      return {
+        url,
+        filename,
+        originalName: file.originalname,
+        mimeType: file.mimetype,
+        fileSize: file.size,
+        filePath: url,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Falha ao fazer upload do arquivo: ${error.message}`,
+        error.stack,
+      );
+      throw new Error('Falha ao fazer upload do arquivo');
+    }
+  }
+
+  async uploadMultipleFiles(
+    files: Express.Multer.File[],
+  ): Promise<FileUploadResult[]> {
+    return Promise.all(files.map((f) => this.uploadFile(f)));
+  }
+
+  async deleteFile(
+    filename: string,
+    directory: string = 'uploads/files',
+  ): Promise<void> {
+    const filepath = path.join(directory, filename);
+
+    try {
+      await fs.unlink(filepath);
+      this.logger.log(`Arquivo deletado: ${filename}`);
+    } catch (error) {
+      this.logger.error(
+        `Falha ao deletar arquivo: ${error.message}`,
+        error.stack,
+      );
+      throw new Error('Falha ao deletar arquivo');
     }
   }
 }

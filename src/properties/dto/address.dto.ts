@@ -1,9 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsOptional,
-  MaxLength,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, MaxLength } from 'class-validator';
 
 export class AddressDto {
   @IsString({ message: 'A rua deve ser uma string' })
@@ -18,7 +13,9 @@ export class AddressDto {
 
   @IsString({ message: 'O complemento deve ser uma string' })
   @IsOptional()
-  @MaxLength(100, { message: 'O complemento deve ter no máximo 100 caracteres' })
+  @MaxLength(100, {
+    message: 'O complemento deve ter no máximo 100 caracteres',
+  })
   complement?: string;
 
   @IsString({ message: 'O bairro deve ser uma string' })

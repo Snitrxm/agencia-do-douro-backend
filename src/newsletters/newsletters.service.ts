@@ -31,17 +31,16 @@ export class NewslettersService {
     return Math.max(1, minutes); // Mínimo 1 minuto
   }
 
-  async create(
-    createNewsletterDto: CreateNewsletterDto,
-  ): Promise<Newsletter> {
+  async create(createNewsletterDto: CreateNewsletterDto): Promise<Newsletter> {
     // Calcula o tempo de leitura automaticamente
-    const readingTime = this.calculateReadingTime(
-      createNewsletterDto.content,
-    );
+    const readingTime = this.calculateReadingTime(createNewsletterDto.content);
 
     // Busca os imóveis se IDs foram fornecidos
     let properties: Property[] = [];
-    if (createNewsletterDto.propertyIds && createNewsletterDto.propertyIds.length > 0) {
+    if (
+      createNewsletterDto.propertyIds &&
+      createNewsletterDto.propertyIds.length > 0
+    ) {
       properties = await this.propertyRepository.find({
         where: { id: In(createNewsletterDto.propertyIds) },
       });
