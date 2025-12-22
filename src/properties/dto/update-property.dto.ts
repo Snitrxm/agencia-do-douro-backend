@@ -181,8 +181,8 @@ export class UpdatePropertyDto {
 
   @IsString({ message: 'O status deve ser uma string' })
   @IsOptional()
-  @IsEnum(['active', 'inactive', 'sold', 'rented'], {
-    message: 'O status deve ser: active, inactive, sold ou rented',
+  @IsEnum(['active', 'inactive', 'sold', 'rented', 'reserved'], {
+    message: 'O status deve ser: active, inactive, reserved, sold ou rented',
   })
   status?: string;
 
