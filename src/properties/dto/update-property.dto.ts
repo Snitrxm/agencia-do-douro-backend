@@ -36,8 +36,8 @@ export class UpdatePropertyDto {
 
   @IsString({ message: 'O tipo de transação deve ser uma string' })
   @IsOptional()
-  @IsEnum(['comprar', 'arrendar', 'vender'], {
-    message: 'O tipo de transação deve ser: comprar, arrendar ou vender',
+  @IsEnum(['comprar', 'arrendar', 'trespasse'], {
+    message: 'O tipo de transação deve ser: comprar, arrendar ou trespasse',
   })
   transactionType?: string;
 

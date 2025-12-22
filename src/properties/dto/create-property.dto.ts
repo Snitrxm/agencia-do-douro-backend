@@ -34,8 +34,8 @@ export class CreatePropertyDto {
 
   @IsString({ message: 'O tipo de transação deve ser uma string' })
   @IsOptional()
-  @IsEnum(['comprar', 'arrendar', 'vender'], {
-    message: 'O tipo de transação deve ser: comprar, arrendar ou vender',
+  @IsEnum(['comprar', 'arrendar', 'trespasse'], {
+    message: 'O tipo de transação deve ser: comprar, arrendar ou trespasse',
   })
   transactionType?: string;
 
@@ -199,8 +199,8 @@ export class CreatePropertyDto {
 
   @IsString({ message: 'O status deve ser uma string' })
   @IsOptional()
-  @IsEnum(['active', 'inactive', 'sold', 'rented'], {
-    message: 'O status deve ser: active, inactive, sold ou rented',
+  @IsEnum(['active', 'inactive', 'sold', 'rented', 'reserved'], {
+    message: 'O status deve ser: active, inactive, reserved, sold ou rented',
   })
   status?: string;
 
