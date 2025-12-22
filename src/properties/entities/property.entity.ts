@@ -106,7 +106,7 @@ export class Property {
 
   @Column({
     type: 'enum',
-    enum: ['active', 'inactive', 'sold', 'rented'],
+    enum: ['active', 'inactive', 'sold', 'rented', 'reserved'],
     default: 'active',
   })
   status: string;
