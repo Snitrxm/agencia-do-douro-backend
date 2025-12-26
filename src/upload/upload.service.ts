@@ -22,6 +22,15 @@ export interface FileUploadResult {
   filePath: string;
 }
 
+export interface MediaUploadResult {
+  url: string;
+  filename: string;
+  type: 'image' | 'video';
+  mimeType: string;
+  width?: number;
+  height?: number;
+}
+
 @Injectable()
 export class UploadService {
   private readonly logger = new Logger(UploadService.name);
@@ -187,5 +196,70 @@ export class UploadService {
       );
       throw new Error('Falha ao deletar arquivo');
     }
+  }
+
+  // ==========================================
+  // Métodos para upload de mídia (imagens e vídeos)
+  // ==========================================
+
+  /**
+   * Upload de arquivo de mídia (imagem ou vídeo)
+   * - Imagens: processadas com Sharp (resize + webp)
+   * - Vídeos: salvos diretamente sem processamento
+   */
+  async uploadMedia(file: Express.Multer.File): Promise<MediaUploadResult> {
+    const isImage = file.mimetype.startsWith('image/');
+    const isVideo = file.mimetype.startsWith('video/');
+
+    if (isImage) {
+      // Processar imagem com Sharp
+      const result = await this.uploadImage(file);
+      return {
+        url: result.url,
+        filename: result.filename,
+        type: 'image',
+        mimeType: `image/${result.format}`,
+        width: result.width,
+        height: result.height,
+      };
+    } else if (isVideo) {
+      // Salvar vídeo diretamente sem processamento
+      const fileExt = path.extname(file.originalname) || '.mp4';
+      const filename = `${uuidv4()}${fileExt}`;
+      const filepath = path.join(this.uploadDir, filename);
+
+      try {
+        await fs.writeFile(filepath, file.buffer);
+        const url = `${this.baseUrl}/uploads/images/${filename}`;
+
+        this.logger.log(`Vídeo enviado com sucesso: ${filename}`);
+
+        return {
+          url,
+          filename,
+          type: 'video',
+          mimeType: file.mimetype,
+        };
+      } catch (error) {
+        this.logger.error(
+          `Falha ao fazer upload do vídeo: ${error.message}`,
+          error.stack,
+        );
+        throw new Error('Falha ao fazer upload do vídeo');
+      }
+    } else {
+      throw new Error('Tipo de arquivo não suportado');
+    }
+  }
+
+  /**
+   * Upload de múltiplos arquivos de mídia
+   */
+  async uploadMultipleMedia(
+    files: Express.Multer.File[],
+  ): Promise<string[]> {
+    const uploadPromises = files.map((file) => this.uploadMedia(file));
+    const results = await Promise.all(uploadPromises);
+    return results.map((result) => result.url);
   }
 }

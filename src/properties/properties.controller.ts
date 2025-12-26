@@ -42,10 +42,13 @@ export class PropertiesController {
     FilesInterceptor('image', 1, {
       limits: { fileSize: 200 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
-        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
+        const isImage = file.mimetype.match(/^image\/(jpg|jpeg|png|gif|webp)$/);
+        const isVideo = file.mimetype.match(/^video\/(mp4|mpeg|quicktime|x-msvideo|x-matroska|webm)$/);
+
+        if (!isImage && !isVideo) {
           return cb(
             new BadRequestException(
-              'Apenas imagens são permitidas (jpg, jpeg, png, gif, webp)',
+              'Apenas imagens (jpg, jpeg, png, gif, webp) e vídeos (mp4, mov, avi, mkv, webm) são permitidos',
             ),
             false,
           );
@@ -58,14 +61,14 @@ export class PropertiesController {
     @Body() createPropertyDto: CreatePropertyDto,
     @UploadedFiles() image?: Express.Multer.File[],
   ) {
-    // Upload da imagem principal para o Cloudinary (se houver)
+    // Upload da mídia principal (imagem ou vídeo)
     let imageUrl: string | undefined;
     if (image && image.length > 0) {
-      const uploadedUrls = await this.uploadService.uploadMultipleImages(image);
+      const uploadedUrls = await this.uploadService.uploadMultipleMedia(image);
       imageUrl = uploadedUrls[0];
     }
 
-    // Adiciona a URL da imagem ao DTO (se houver)
+    // Adiciona a URL da mídia ao DTO (se houver)
     const propertyData = {
       ...createPropertyDto,
       image: imageUrl || createPropertyDto.image,
@@ -102,10 +105,13 @@ export class PropertiesController {
     FilesInterceptor('image', 1, {
       limits: { fileSize: 200 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
-        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
+        const isImage = file.mimetype.match(/^image\/(jpg|jpeg|png|gif|webp)$/);
+        const isVideo = file.mimetype.match(/^video\/(mp4|mpeg|quicktime|x-msvideo|x-matroska|webm)$/);
+
+        if (!isImage && !isVideo) {
           return cb(
             new BadRequestException(
-              'Apenas imagens são permitidas (jpg, jpeg, png, gif, webp)',
+              'Apenas imagens (jpg, jpeg, png, gif, webp) e vídeos (mp4, mov, avi, mkv, webm) são permitidos',
             ),
             false,
           );
@@ -138,10 +144,13 @@ export class PropertiesController {
     FilesInterceptor('images', 10, {
       limits: { fileSize: 200 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
-        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
+        const isImage = file.mimetype.match(/^image\/(jpg|jpeg|png|gif|webp)$/);
+        const isVideo = file.mimetype.match(/^video\/(mp4|mpeg|quicktime|x-msvideo|x-matroska|webm)$/);
+
+        if (!isImage && !isVideo) {
           return cb(
             new BadRequestException(
-              'Apenas imagens são permitidas (jpg, jpeg, png, gif, webp)',
+              'Apenas imagens (jpg, jpeg, png, gif, webp) e vídeos (mp4, mov, avi, mkv, webm) são permitidos',
             ),
             false,
           );
@@ -175,10 +184,13 @@ export class PropertiesController {
     FilesInterceptor('imagesToAdd', 10, {
       limits: { fileSize: 200 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
-        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
+        const isImage = file.mimetype.match(/^image\/(jpg|jpeg|png|gif|webp)$/);
+        const isVideo = file.mimetype.match(/^video\/(mp4|mpeg|quicktime|x-msvideo|x-matroska|webm)$/);
+
+        if (!isImage && !isVideo) {
           return cb(
             new BadRequestException(
-              'Apenas imagens são permitidas (jpg, jpeg, png, gif, webp)',
+              'Apenas imagens (jpg, jpeg, png, gif, webp) e vídeos (mp4, mov, avi, mkv, webm) são permitidos',
             ),
             false,
           );

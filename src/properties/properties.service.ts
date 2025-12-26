@@ -351,13 +351,13 @@ export class PropertiesService {
         }
       }
 
-      // Upload da nova imagem
+      // Upload da nova mídia (imagem ou vídeo)
       try {
         const uploadedUrls =
-          await this.uploadService.uploadMultipleImages(newImage);
+          await this.uploadService.uploadMultipleMedia(newImage);
         updatePropertyDto.image = uploadedUrls[0];
       } catch (error) {
-        console.error('Erro ao fazer upload da nova imagem:', error);
+        console.error('Erro ao fazer upload da nova mídia:', error);
         throw error;
       }
     }
@@ -426,7 +426,7 @@ export class PropertiesService {
 
     if (images && images.length > 0) {
       const uploadedUrls =
-        await this.uploadService.uploadMultipleImages(images);
+        await this.uploadService.uploadMultipleMedia(images);
       imageUrls = [...imageUrls, ...uploadedUrls];
     }
 
@@ -491,14 +491,14 @@ export class PropertiesService {
       updatedImages = [...updatedImages, ...updateImageSectionDto.images];
     }
 
-    // Faz upload das novas imagens
+    // Faz upload das novas mídias (imagens ou vídeos)
     if (imagesToAdd && imagesToAdd.length > 0) {
       try {
         const newImageUrls =
-          await this.uploadService.uploadMultipleImages(imagesToAdd);
+          await this.uploadService.uploadMultipleMedia(imagesToAdd);
         updatedImages = [...updatedImages, ...newImageUrls];
       } catch (error) {
-        console.error('Erro ao fazer upload das novas imagens:', error);
+        console.error('Erro ao fazer upload das novas mídias:', error);
         throw error;
       }
     }
