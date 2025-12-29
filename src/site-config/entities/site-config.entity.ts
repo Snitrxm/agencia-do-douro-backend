@@ -23,6 +23,15 @@ export class SiteConfig {
   @Column({ type: 'int', default: 0 })
   imoveisVendidos: number;
 
+  @Column({ type: 'int', default: 0 })
+  episodiosPublicados: number;
+
+  @Column({ type: 'int', default: 0 })
+  temporadas: number;
+
+  @Column({ type: 'int', default: 0 })
+  especialistasConvidados: number;
+
   @CreateDateColumn()
   createdAt: Date;
 

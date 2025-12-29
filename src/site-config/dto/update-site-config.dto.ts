@@ -19,4 +19,19 @@ export class UpdateSiteConfigDto {
   @IsOptional()
   @IsNumber()
   imoveisVendidos?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  episodiosPublicados?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  temporadas?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  especialistasConvidados?: number;
 }
