@@ -36,21 +36,12 @@ export class SiteConfigService {
   ): Promise<SiteConfig> {
     const config = await this.getConfig();
 
-    if (updateSiteConfigDto.clientesSatisfeitos !== undefined) {
-      config.clientesSatisfeitos = updateSiteConfigDto.clientesSatisfeitos;
-    }
-
-    if (updateSiteConfigDto.rating !== undefined) {
-      config.rating = updateSiteConfigDto.rating;
-    }
-
-    if (updateSiteConfigDto.anosExperiencia !== undefined) {
-      config.anosExperiencia = updateSiteConfigDto.anosExperiencia;
-    }
-
-    if (updateSiteConfigDto.imoveisVendidos !== undefined) {
-      config.imoveisVendidos = updateSiteConfigDto.imoveisVendidos;
-    }
+    // Atualiza automaticamente apenas os campos que foram enviados no DTO
+    Object.keys(updateSiteConfigDto).forEach((key) => {
+      if (updateSiteConfigDto[key] !== undefined) {
+        config[key] = updateSiteConfigDto[key];
+      }
+    });
 
     return this.siteConfigRepository.save(config);
   }
