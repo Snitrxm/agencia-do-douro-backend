@@ -8,7 +8,8 @@
       "Bash(npx ts-node:*)",
       "Bash(docker login:*)",
       "Bash(docker buildx build:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []

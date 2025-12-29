@@ -5,6 +5,7 @@ import { PropertiesModule } from './properties/properties.module';
 import { UploadModule } from './upload/upload.module';
 import { NewslettersModule } from './newsletters/newsletters.module';
 import { SiteConfigModule } from './site-config/site-config.module';
+import { TeamMembersModule } from './team-members/team-members.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { SiteConfigModule } from './site-config/site-config.module';
     UploadModule,
     NewslettersModule,
     SiteConfigModule,
+    TeamMembersModule,
   ],
   controllers: [],
   providers: [],
