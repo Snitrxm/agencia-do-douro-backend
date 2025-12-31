@@ -34,4 +34,9 @@ export class UpdateSiteConfigDto {
   @IsNumber()
   @Min(0)
   especialistasConvidados?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  eurosEmTransacoes?: number;
 }

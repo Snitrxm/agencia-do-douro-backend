@@ -32,6 +32,9 @@ export class SiteConfig {
   @Column({ type: 'int', default: 0 })
   especialistasConvidados: number;
 
+  @Column({ type: 'int', default: 0 })
+  eurosEmTransacoes: number;
+
   @CreateDateColumn()
   createdAt: Date;
 
