@@ -241,4 +241,8 @@ export class CreatePropertyDto {
   })
   @IsOptional()
   relatedPropertyIds?: string[];
+
+  @IsString()
+  @IsOptional()
+  team_member_id?: string;
 }

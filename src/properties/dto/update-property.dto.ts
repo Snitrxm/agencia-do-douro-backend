@@ -48,6 +48,10 @@ export class UpdatePropertyDto {
   })
   propertyType?: string;
 
+  @IsString()
+  @IsOptional()
+  team_member_id?: string;
+
   @Transform(({ value }) => {
     if (value === 'true' || value === true) return true;
     if (value === 'false' || value === false) return false;
