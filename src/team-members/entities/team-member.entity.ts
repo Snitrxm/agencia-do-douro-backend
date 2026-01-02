@@ -4,7 +4,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Property } from '../../properties/entities/property.entity';
 
 @Entity('team_members')
 export class TeamMember {
@@ -19,6 +21,9 @@ export class TeamMember {
 
   @Column({ type: 'varchar', length: 255 })
   email: string;
+
+  @OneToMany(() => Property, (property) => property.teamMember)
+  properties: Property[];
 
   @CreateDateColumn()
   createdAt: Date;

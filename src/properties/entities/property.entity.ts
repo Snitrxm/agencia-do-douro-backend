@@ -6,11 +6,14 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToMany,
+  ManyToOne,
+  JoinColumn,
   JoinTable,
 } from 'typeorm';
 import { PropertyImageSection } from './property-image-section.entity';
 import { PropertyFile } from './property-file.entity';
 import { Newsletter } from '../../newsletters/entities/newsletter.entity';
+import { TeamMember } from '../../team-members/entities/team-member.entity';
 
 @Entity('properties')
 export class Property {
@@ -137,6 +140,10 @@ export class Property {
 
   @OneToMany(() => PropertyFile, (file) => file.property, { cascade: true })
   files: PropertyFile[];
+
+  @ManyToOne(() => TeamMember, { nullable: true })
+  @JoinColumn({ name: 'team_member_id' })
+  teamMember: TeamMember;
 
   @CreateDateColumn()
   createdAt: Date;
