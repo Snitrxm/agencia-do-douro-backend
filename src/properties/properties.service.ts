@@ -272,7 +272,7 @@ export class PropertiesService {
     id: string,
     includeRelated: boolean = false,
   ): Promise<Property | null> {
-    const relations = ['imageSections', 'files'];
+    const relations = ['imageSections', 'files', 'teamMember'];
 
     if (includeRelated) {
       relations.push('relatedProperties');
