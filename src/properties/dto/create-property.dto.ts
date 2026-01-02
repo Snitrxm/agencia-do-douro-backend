@@ -244,5 +244,5 @@ export class CreatePropertyDto {
 
   @IsString()
   @IsOptional()
-  team_member_id?: string;
+  teamMemberId?: string;
 }

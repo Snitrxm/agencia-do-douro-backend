@@ -50,7 +50,7 @@ export class UpdatePropertyDto {
 
   @IsString()
   @IsOptional()
-  team_member_id?: string;
+  teamMemberId?: string;
 
   @Transform(({ value }) => {
     if (value === 'true' || value === true) return true;

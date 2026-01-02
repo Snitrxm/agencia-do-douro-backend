@@ -35,22 +35,20 @@ export class PropertiesService {
   ) {}
 
   async create(createPropertyDto: CreatePropertyDto): Promise<Property> {
+    // Extrair campos que precisam ser tratados separadamente
+    const { teamMemberId, relatedPropertyIds, ...propertyData } = createPropertyDto;
+
     // Buscar propriedades relacionadas se IDs foram fornecidos
     let relatedProperties: Property[] = [];
-    if (
-      createPropertyDto.relatedPropertyIds &&
-      createPropertyDto.relatedPropertyIds.length > 0
-    ) {
+    if (relatedPropertyIds && relatedPropertyIds.length > 0) {
       relatedProperties = await this.propertyRepository.find({
-        where: { id: In(createPropertyDto.relatedPropertyIds) },
+        where: { id: In(relatedPropertyIds) },
       });
 
       // Validar que todas as propriedades existem
-      if (
-        relatedProperties.length !== createPropertyDto.relatedPropertyIds.length
-      ) {
+      if (relatedProperties.length !== relatedPropertyIds.length) {
         const foundIds = relatedProperties.map((p) => p.id);
-        const notFoundIds = createPropertyDto.relatedPropertyIds.filter(
+        const notFoundIds = relatedPropertyIds.filter(
           (id) => !foundIds.includes(id),
         );
         throw new Error(
@@ -60,8 +58,9 @@ export class PropertiesService {
     }
 
     const property = this.propertyRepository.create({
-      ...createPropertyDto,
+      ...propertyData,
       relatedProperties,
+      teamMember: teamMemberId ? { id: teamMemberId } as any : null,
     });
 
     return this.propertyRepository.save(property);
@@ -362,28 +361,42 @@ export class PropertiesService {
       }
     }
 
-    await this.propertyRepository.update(id, updatePropertyDto);
+    // Extrair campos que precisam ser tratados separadamente
+    const { teamMemberId, relatedPropertyIds, ...updateData } = updatePropertyDto;
+
+    // Atualizar campos básicos
+    await this.propertyRepository.update(id, updateData);
+
+    // Atualizar team member se fornecido
+    if (teamMemberId !== undefined) {
+      await this.propertyRepository
+        .createQueryBuilder()
+        .update(Property)
+        .set({ teamMember: teamMemberId ? { id: teamMemberId } as any : null })
+        .where('id = :id', { id })
+        .execute();
+    }
 
     // Atualizar propriedades relacionadas se fornecidas
-    if (updatePropertyDto.relatedPropertyIds !== undefined) {
+    if (relatedPropertyIds !== undefined) {
       const propertyWithRelations = await this.propertyRepository.findOne({
         where: { id },
         relations: ['relatedProperties'],
       });
 
       if (propertyWithRelations) {
-        if (updatePropertyDto.relatedPropertyIds.length > 0) {
+        if (relatedPropertyIds.length > 0) {
           const relatedProperties = await this.propertyRepository.find({
-            where: { id: In(updatePropertyDto.relatedPropertyIds) },
+            where: { id: In(relatedPropertyIds) },
           });
 
           // Validar que todas as propriedades existem
           if (
             relatedProperties.length !==
-            updatePropertyDto.relatedPropertyIds.length
+            relatedPropertyIds.length
           ) {
             const foundIds = relatedProperties.map((p) => p.id);
-            const notFoundIds = updatePropertyDto.relatedPropertyIds.filter(
+            const notFoundIds = relatedPropertyIds.filter(
               (id) => !foundIds.includes(id),
             );
             throw new Error(
