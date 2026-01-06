@@ -353,7 +353,7 @@ export class PropertiesService {
       // Upload da nova mídia (imagem ou vídeo)
       try {
         const uploadedUrls =
-          await this.uploadService.uploadMultipleMedia(newImage);
+          await this.uploadService.uploadMultipleMedia(newImage, { propertyId: id });
         updatePropertyDto.image = uploadedUrls[0];
       } catch (error) {
         console.error('Erro ao fazer upload da nova mídia:', error);
@@ -439,7 +439,7 @@ export class PropertiesService {
 
     if (images && images.length > 0) {
       const uploadedUrls =
-        await this.uploadService.uploadMultipleMedia(images);
+        await this.uploadService.uploadMultipleMedia(images, { propertyId });
       imageUrls = [...imageUrls, ...uploadedUrls];
     }
 
@@ -508,7 +508,7 @@ export class PropertiesService {
     if (imagesToAdd && imagesToAdd.length > 0) {
       try {
         const newImageUrls =
-          await this.uploadService.uploadMultipleMedia(imagesToAdd);
+          await this.uploadService.uploadMultipleMedia(imagesToAdd, { propertyId: section.propertyId });
         updatedImages = [...updatedImages, ...newImageUrls];
       } catch (error) {
         console.error('Erro ao fazer upload das novas mídias:', error);
@@ -786,7 +786,7 @@ export class PropertiesService {
     const property = await this.findOne(propertyId);
     if (!property) return null;
 
-    const uploadResult = await this.uploadService.uploadFile(file);
+    const uploadResult = await this.uploadService.uploadFile(file, { propertyId });
 
     const propertyFile = this.propertyFileRepository.create({
       propertyId,
@@ -859,7 +859,7 @@ export class PropertiesService {
     }
 
     const uploadPromises = files.map(async (file) => {
-      const uploadResult = await this.uploadService.uploadFile(file);
+      const uploadResult = await this.uploadService.uploadFile(file, { propertyId });
 
       const propertyFile = this.propertyFileRepository.create({
         propertyId,

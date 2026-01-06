@@ -61,20 +61,24 @@ export class PropertiesController {
     @Body() createPropertyDto: CreatePropertyDto,
     @UploadedFiles() image?: Express.Multer.File[],
   ) {
-    // Upload da mídia principal (imagem ou vídeo)
-    let imageUrl: string | undefined;
+    // Primeiro cria a propriedade para ter um ID
+    const property = await this.propertiesService.create(createPropertyDto);
+
+    // Upload da mídia principal (imagem ou vídeo) com o ID da propriedade
     if (image && image.length > 0) {
-      const uploadedUrls = await this.uploadService.uploadMultipleMedia(image);
-      imageUrl = uploadedUrls[0];
+      const uploadedUrls = await this.uploadService.uploadMultipleMedia(image, {
+        propertyId: property.id,
+      });
+
+      // Atualiza a propriedade com a URL da imagem
+      property.image = uploadedUrls[0];
+      await this.propertiesService.update(property.id, {
+        id: property.id,
+        image: uploadedUrls[0],
+      });
     }
 
-    // Adiciona a URL da mídia ao DTO (se houver)
-    const propertyData = {
-      ...createPropertyDto,
-      image: imageUrl || createPropertyDto.image,
-    };
-
-    return this.propertiesService.create(propertyData);
+    return property;
   }
 
   @Get()
