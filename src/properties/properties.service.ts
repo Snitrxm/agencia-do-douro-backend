@@ -66,6 +66,43 @@ export class PropertiesService {
     return this.propertyRepository.save(property);
   }
 
+  async createWithId(
+    id: string,
+    createPropertyDto: CreatePropertyDto,
+  ): Promise<Property> {
+    // Extrair campos que precisam ser tratados separadamente
+    const { teamMemberId, relatedPropertyIds, ...propertyData } =
+      createPropertyDto;
+
+    // Buscar propriedades relacionadas se IDs foram fornecidos
+    let relatedProperties: Property[] = [];
+    if (relatedPropertyIds && relatedPropertyIds.length > 0) {
+      relatedProperties = await this.propertyRepository.find({
+        where: { id: In(relatedPropertyIds) },
+      });
+
+      // Validar que todas as propriedades existem
+      if (relatedProperties.length !== relatedPropertyIds.length) {
+        const foundIds = relatedProperties.map((p) => p.id);
+        const notFoundIds = relatedPropertyIds.filter(
+          (id) => !foundIds.includes(id),
+        );
+        throw new Error(
+          `Propriedades não encontradas: ${notFoundIds.join(', ')}`,
+        );
+      }
+    }
+
+    const property = this.propertyRepository.create({
+      id, // Define o ID manualmente
+      ...propertyData,
+      relatedProperties,
+      teamMember: teamMemberId ? ({ id: teamMemberId } as any) : null,
+    });
+
+    return this.propertyRepository.save(property);
+  }
+
   async findAll(filterPropertyDto: FilterPropertyDto): Promise<{
     data: Property[];
     total: number;

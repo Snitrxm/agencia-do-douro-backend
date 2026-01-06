@@ -29,6 +29,7 @@ import {
 import { CreatePropertyFileDto } from './dto/create-property-file.dto';
 import { UpdatePropertyFileDto } from './dto/update-property-file.dto';
 import { UploadService } from '../upload/upload.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Controller('properties')
 export class PropertiesController {
@@ -61,24 +62,25 @@ export class PropertiesController {
     @Body() createPropertyDto: CreatePropertyDto,
     @UploadedFiles() image?: Express.Multer.File[],
   ) {
-    // Primeiro cria a propriedade para ter um ID
-    const property = await this.propertiesService.create(createPropertyDto);
+    // Gera um UUID antecipadamente para usar no nome do arquivo
+    const propertyId = uuidv4();
 
-    // Upload da mídia principal (imagem ou vídeo) com o ID da propriedade
+    // Upload da mídia principal (imagem ou vídeo) com o ID gerado
+    let imageUrl: string | undefined;
     if (image && image.length > 0) {
       const uploadedUrls = await this.uploadService.uploadMultipleMedia(image, {
-        propertyId: property.id,
+        propertyId,
       });
-
-      // Atualiza a propriedade com a URL da imagem
-      property.image = uploadedUrls[0];
-      await this.propertiesService.update(property.id, {
-        id: property.id,
-        image: uploadedUrls[0],
-      });
+      imageUrl = uploadedUrls[0];
     }
 
-    return property;
+    // Cria a propriedade com o ID pré-gerado e a URL da imagem
+    const propertyData = {
+      ...createPropertyDto,
+      image: imageUrl || createPropertyDto.image,
+    };
+
+    return this.propertiesService.createWithId(propertyId, propertyData);
   }
 
   @Get()
