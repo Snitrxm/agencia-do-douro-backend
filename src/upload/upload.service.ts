@@ -13,6 +13,10 @@ export interface UploadResult {
   height: number;
 }
 
+export interface UploadOptions {
+  propertyId?: string;
+}
+
 export interface FileUploadResult {
   url: string;
   filename: string;
@@ -70,8 +74,28 @@ export class UploadService {
     }
   }
 
-  async uploadImage(file: Express.Multer.File): Promise<UploadResult> {
-    const filename = `${uuidv4()}.webp`;
+  /**
+   * Gera um nome único para o arquivo
+   * Se propertyId for fornecido: {propertyId}-{timestamp}-{random}.ext
+   * Caso contrário: {uuid}.ext
+   */
+  private generateFilename(
+    extension: string,
+    propertyId?: string,
+  ): string {
+    if (propertyId) {
+      const timestamp = Date.now();
+      const randomChars = Math.random().toString(36).substring(2, 8);
+      return `${propertyId}-${timestamp}-${randomChars}${extension}`;
+    }
+    return `${uuidv4()}${extension}`;
+  }
+
+  async uploadImage(
+    file: Express.Multer.File,
+    options?: UploadOptions,
+  ): Promise<UploadResult> {
+    const filename = this.generateFilename('.webp', options?.propertyId);
     const filepath = path.join(this.uploadDir, filename);
 
     try {
@@ -110,8 +134,11 @@ export class UploadService {
     }
   }
 
-  async uploadMultipleImages(files: Express.Multer.File[]): Promise<string[]> {
-    const uploadPromises = files.map((file) => this.uploadImage(file));
+  async uploadMultipleImages(
+    files: Express.Multer.File[],
+    options?: UploadOptions,
+  ): Promise<string[]> {
+    const uploadPromises = files.map((file) => this.uploadImage(file, options));
     const results = await Promise.all(uploadPromises);
     return results.map((result) => result.url);
   }
@@ -135,9 +162,12 @@ export class UploadService {
   // Métodos para upload de arquivos genéricos
   // ==========================================
 
-  async uploadFile(file: Express.Multer.File): Promise<FileUploadResult> {
+  async uploadFile(
+    file: Express.Multer.File,
+    options?: UploadOptions,
+  ): Promise<FileUploadResult> {
     const fileExt = path.extname(file.originalname);
-    const filename = `${uuidv4()}${fileExt}`;
+    const filename = this.generateFilename(fileExt, options?.propertyId);
     const uploadDir = this.configService.get<string>(
       'UPLOAD_FILES_DIR',
       'uploads/files',
@@ -176,8 +206,9 @@ export class UploadService {
 
   async uploadMultipleFiles(
     files: Express.Multer.File[],
+    options?: UploadOptions,
   ): Promise<FileUploadResult[]> {
-    return Promise.all(files.map((f) => this.uploadFile(f)));
+    return Promise.all(files.map((f) => this.uploadFile(f, options)));
   }
 
   async deleteFile(
@@ -207,13 +238,16 @@ export class UploadService {
    * - Imagens: processadas com Sharp (resize + webp)
    * - Vídeos: salvos diretamente sem processamento
    */
-  async uploadMedia(file: Express.Multer.File): Promise<MediaUploadResult> {
+  async uploadMedia(
+    file: Express.Multer.File,
+    options?: UploadOptions,
+  ): Promise<MediaUploadResult> {
     const isImage = file.mimetype.startsWith('image/');
     const isVideo = file.mimetype.startsWith('video/');
 
     if (isImage) {
       // Processar imagem com Sharp
-      const result = await this.uploadImage(file);
+      const result = await this.uploadImage(file, options);
       return {
         url: result.url,
         filename: result.filename,
@@ -225,7 +259,7 @@ export class UploadService {
     } else if (isVideo) {
       // Salvar vídeo diretamente sem processamento
       const fileExt = path.extname(file.originalname) || '.mp4';
-      const filename = `${uuidv4()}${fileExt}`;
+      const filename = this.generateFilename(fileExt, options?.propertyId);
       const filepath = path.join(this.uploadDir, filename);
 
       try {
@@ -255,8 +289,11 @@ export class UploadService {
   /**
    * Upload de múltiplos arquivos de mídia
    */
-  async uploadMultipleMedia(files: Express.Multer.File[]): Promise<string[]> {
-    const uploadPromises = files.map((file) => this.uploadMedia(file));
+  async uploadMultipleMedia(
+    files: Express.Multer.File[],
+    options?: UploadOptions,
+  ): Promise<string[]> {
+    const uploadPromises = files.map((file) => this.uploadMedia(file, options));
     const results = await Promise.all(uploadPromises);
     return results.map((result) => result.url);
   }

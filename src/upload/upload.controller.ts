@@ -5,6 +5,7 @@ import {
   UploadedFiles,
   UseInterceptors,
   BadRequestException,
+  Body,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './upload.service';
@@ -30,12 +31,15 @@ export class UploadController {
       },
     }),
   )
-  async uploadImage(@UploadedFile() file: Express.Multer.File) {
+  async uploadImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('propertyId') propertyId?: string,
+  ) {
     if (!file) {
       throw new BadRequestException('Nenhum arquivo foi enviado');
     }
 
-    const result = await this.uploadService.uploadImage(file);
+    const result = await this.uploadService.uploadImage(file, { propertyId });
     return {
       url: result.url,
       filename: result.filename,
@@ -62,12 +66,17 @@ export class UploadController {
       },
     }),
   )
-  async uploadMultipleImages(@UploadedFiles() files: Express.Multer.File[]) {
+  async uploadMultipleImages(
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body('propertyId') propertyId?: string,
+  ) {
     if (!files || files.length === 0) {
       throw new BadRequestException('Nenhum arquivo foi enviado');
     }
 
-    const urls = await this.uploadService.uploadMultipleImages(files);
+    const urls = await this.uploadService.uploadMultipleImages(files, {
+      propertyId,
+    });
     return {
       urls,
       count: urls.length,
