@@ -255,9 +255,7 @@ export class UploadService {
   /**
    * Upload de múltiplos arquivos de mídia
    */
-  async uploadMultipleMedia(
-    files: Express.Multer.File[],
-  ): Promise<string[]> {
+  async uploadMultipleMedia(files: Express.Multer.File[]): Promise<string[]> {
     const uploadPromises = files.map((file) => this.uploadMedia(file));
     const results = await Promise.all(uploadPromises);
     return results.map((result) => result.url);

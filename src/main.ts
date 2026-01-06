@@ -9,9 +9,27 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // Configurar body parser com limite maior (200MB para JSON e URL encoded)
-  app.use(express.json({ limit: '200mb' }));
-  app.use(express.urlencoded({ limit: '200mb', extended: true }));
-  app.use(express.raw({ limit: '200mb' }));
+  // IMPORTANTE: Não processar multipart/form-data aqui, deixar para o Multer
+  app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+    if (req.is('multipart/form-data')) {
+      return next();
+    }
+    express.json({ limit: '200mb' })(req, res, next);
+  });
+
+  app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+    if (req.is('multipart/form-data')) {
+      return next();
+    }
+    express.urlencoded({ limit: '200mb', extended: true })(req, res, next);
+  });
+
+  app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+    if (req.is('multipart/form-data')) {
+      return next();
+    }
+    express.raw({ limit: '200mb' })(req, res, next);
+  });
 
   app.enableCors({
     origin: '*',

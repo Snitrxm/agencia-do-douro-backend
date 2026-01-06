@@ -141,7 +141,7 @@ export class PropertiesController {
 
   @Post(':id/image-sections')
   @UseInterceptors(
-    FilesInterceptor('images', 10, {
+    FilesInterceptor('images', undefined, {
       limits: { fileSize: 200 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
         const isImage = file.mimetype.match(/^image\/(jpg|jpeg|png|gif|webp)$/);
@@ -181,7 +181,7 @@ export class PropertiesController {
 
   @Patch('image-sections/:sectionId')
   @UseInterceptors(
-    FilesInterceptor('imagesToAdd', 10, {
+    FilesInterceptor('imagesToAdd', undefined, {
       limits: { fileSize: 200 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
         const isImage = file.mimetype.match(/^image\/(jpg|jpeg|png|gif|webp)$/);
