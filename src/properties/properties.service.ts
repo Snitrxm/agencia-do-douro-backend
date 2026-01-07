@@ -55,12 +55,12 @@ export class PropertiesService {
 
     // For now, return empty translations
     return {
-      title_en: null,
-      title_fr: null,
-      description_en: null,
-      description_fr: null,
-      paymentConditions_en: null,
-      paymentConditions_fr: null,
+      title_en: '',
+      title_fr: '',
+      description_en: '',
+      description_fr: '',
+      paymentConditions_en: '',
+      paymentConditions_fr: '',
     };
   }
 
