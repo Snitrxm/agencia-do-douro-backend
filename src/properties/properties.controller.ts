@@ -13,6 +13,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { I18n, I18nContext } from 'nestjs-i18n';
 import { PropertiesService } from './properties.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
@@ -84,21 +85,29 @@ export class PropertiesController {
   }
 
   @Get()
-  findAll(@Query() filterPropertyDto: FilterPropertyDto) {
-    return this.propertiesService.findAll(filterPropertyDto);
+  findAll(
+    @Query() filterPropertyDto: FilterPropertyDto,
+    @Query('lang') lang?: string,
+  ) {
+    return this.propertiesService.findAll(filterPropertyDto, lang || 'pt');
   }
 
   @Get('featured/list')
-  findFeatured() {
-    return this.propertiesService.findFeatured();
+  findFeatured(@Query('lang') lang?: string) {
+    return this.propertiesService.findFeatured(lang || 'pt');
   }
 
   @Get(':id')
   findOne(
     @Param('id') id: string,
     @Query('includeRelated') includeRelated?: string,
+    @Query('lang') lang?: string,
   ) {
-    return this.propertiesService.findOne(id, includeRelated === 'true');
+    return this.propertiesService.findOne(
+      id,
+      includeRelated === 'true',
+      lang || 'pt',
+    );
   }
 
   @Patch(':id/featured')

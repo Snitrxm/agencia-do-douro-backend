@@ -34,9 +34,63 @@ export class PropertiesService {
     private uploadService: UploadService,
   ) {}
 
+  /**
+   * Auto-translate property content from Portuguese to English and French
+   * TODO: Implement translation using OpenAI/DeepL API
+   * For now, leaves EN/FR fields empty
+   */
+  private async translateProperty(propertyData: Partial<Property>): Promise<{
+    title_en?: string;
+    title_fr?: string;
+    description_en?: string;
+    description_fr?: string;
+    paymentConditions_en?: string;
+    paymentConditions_fr?: string;
+  }> {
+    // TODO: Implement automatic translation here
+    // Example with OpenAI:
+    // const titleEn = await this.openaiService.translate(propertyData.title_pt, 'en');
+    // const titleFr = await this.openaiService.translate(propertyData.title_pt, 'fr');
+    // return { title_en: titleEn, title_fr: titleFr, ... };
+
+    // For now, return empty translations
+    return {
+      title_en: null,
+      title_fr: null,
+      description_en: null,
+      description_fr: null,
+      paymentConditions_en: null,
+      paymentConditions_fr: null,
+    };
+  }
+
+  /**
+   * Transform property to include virtual fields based on requested locale
+   * Returns title/description/paymentConditions as generic fields for backwards compatibility
+   */
+  private transformPropertyForLocale(
+    property: Property,
+    locale: string = 'pt',
+  ): any {
+    const transformed = { ...property };
+
+    // Add virtual fields for backwards compatibility
+    transformed['title'] = property[`title_${locale}`] || property.title_pt;
+    transformed['description'] =
+      property[`description_${locale}`] || property.description_pt;
+    transformed['paymentConditions'] =
+      property[`paymentConditions_${locale}`] || property.paymentConditions_pt;
+
+    return transformed;
+  }
+
   async create(createPropertyDto: CreatePropertyDto): Promise<Property> {
     // Extrair campos que precisam ser tratados separadamente
-    const { teamMemberId, relatedPropertyIds, ...propertyData } = createPropertyDto;
+    const { teamMemberId, relatedPropertyIds, ...propertyData } =
+      createPropertyDto;
+
+    // Auto-translate to EN/FR (TODO: implement translation API)
+    const translations = await this.translateProperty(propertyData as any);
 
     // Buscar propriedades relacionadas se IDs foram fornecidos
     let relatedProperties: Property[] = [];
@@ -59,8 +113,9 @@ export class PropertiesService {
 
     const property = this.propertyRepository.create({
       ...propertyData,
+      ...translations, // Add auto-translated fields
       relatedProperties,
-      teamMember: teamMemberId ? { id: teamMemberId } as any : null,
+      teamMember: teamMemberId ? ({ id: teamMemberId } as any) : null,
     });
 
     return this.propertyRepository.save(property);
@@ -73,6 +128,9 @@ export class PropertiesService {
     // Extrair campos que precisam ser tratados separadamente
     const { teamMemberId, relatedPropertyIds, ...propertyData } =
       createPropertyDto;
+
+    // Auto-translate to EN/FR (TODO: implement translation API)
+    const translations = await this.translateProperty(propertyData as any);
 
     // Buscar propriedades relacionadas se IDs foram fornecidos
     let relatedProperties: Property[] = [];
@@ -96,6 +154,7 @@ export class PropertiesService {
     const property = this.propertyRepository.create({
       id, // Define o ID manualmente
       ...propertyData,
+      ...translations, // Add auto-translated fields
       relatedProperties,
       teamMember: teamMemberId ? ({ id: teamMemberId } as any) : null,
     });
@@ -103,7 +162,10 @@ export class PropertiesService {
     return this.propertyRepository.save(property);
   }
 
-  async findAll(filterPropertyDto: FilterPropertyDto): Promise<{
+  async findAll(
+    filterPropertyDto: FilterPropertyDto,
+    locale: string = 'pt',
+  ): Promise<{
     data: Property[];
     total: number;
     page: number;
@@ -296,8 +358,13 @@ export class PropertiesService {
     // Executar query
     const [data, total] = await queryBuilder.getManyAndCount();
 
+    // Transform properties to include virtual fields based on locale
+    const transformedData = data.map((property) =>
+      this.transformPropertyForLocale(property, locale),
+    );
+
     return {
-      data,
+      data: transformedData,
       total,
       page,
       limit,
@@ -308,6 +375,7 @@ export class PropertiesService {
   async findOne(
     id: string,
     includeRelated: boolean = false,
+    locale: string = 'pt',
   ): Promise<Property | null> {
     const relations = ['imageSections', 'files', 'teamMember'];
 
@@ -315,7 +383,7 @@ export class PropertiesService {
       relations.push('relatedProperties');
     }
 
-    return this.propertyRepository.findOne({
+    const property = await this.propertyRepository.findOne({
       where: { id },
       relations,
       order: {
@@ -324,14 +392,24 @@ export class PropertiesService {
         },
       },
     });
+
+    if (!property) {
+      return null;
+    }
+
+    return this.transformPropertyForLocale(property, locale);
   }
 
-  async findFeatured(): Promise<Property[]> {
-    return this.propertyRepository.find({
+  async findFeatured(locale: string = 'pt'): Promise<Property[]> {
+    const properties = await this.propertyRepository.find({
       where: { isFeatured: true, status: 'active' },
       order: { createdAt: 'DESC' },
       take: 3,
     });
+
+    return properties.map((property) =>
+      this.transformPropertyForLocale(property, locale),
+    );
   }
 
   async toggleFeatured(id: string): Promise<Property | null> {
@@ -389,8 +467,10 @@ export class PropertiesService {
 
       // Upload da nova mídia (imagem ou vídeo)
       try {
-        const uploadedUrls =
-          await this.uploadService.uploadMultipleMedia(newImage, { propertyId: id });
+        const uploadedUrls = await this.uploadService.uploadMultipleMedia(
+          newImage,
+          { propertyId: id },
+        );
         updatePropertyDto.image = uploadedUrls[0];
       } catch (error) {
         console.error('Erro ao fazer upload da nova mídia:', error);
@@ -399,17 +479,33 @@ export class PropertiesService {
     }
 
     // Extrair campos que precisam ser tratados separadamente
-    const { teamMemberId, relatedPropertyIds, ...updateData } = updatePropertyDto;
+    const { teamMemberId, relatedPropertyIds, ...updateData } =
+      updatePropertyDto;
 
-    // Atualizar campos básicos
-    await this.propertyRepository.update(id, updateData);
+    // Auto-translate to EN/FR if PT fields were updated (TODO: implement translation API)
+    let translations = {};
+    if (
+      updateData.title_pt ||
+      updateData.description_pt ||
+      updateData.paymentConditions_pt
+    ) {
+      translations = await this.translateProperty(updateData as any);
+    }
+
+    // Atualizar campos básicos + translations
+    await this.propertyRepository.update(id, {
+      ...updateData,
+      ...translations,
+    });
 
     // Atualizar team member se fornecido
     if (teamMemberId !== undefined) {
       await this.propertyRepository
         .createQueryBuilder()
         .update(Property)
-        .set({ teamMember: teamMemberId ? { id: teamMemberId } as any : null })
+        .set({
+          teamMember: teamMemberId ? ({ id: teamMemberId } as any) : null,
+        })
         .where('id = :id', { id })
         .execute();
     }
@@ -428,10 +524,7 @@ export class PropertiesService {
           });
 
           // Validar que todas as propriedades existem
-          if (
-            relatedProperties.length !==
-            relatedPropertyIds.length
-          ) {
+          if (relatedProperties.length !== relatedPropertyIds.length) {
             const foundIds = relatedProperties.map((p) => p.id);
             const notFoundIds = relatedPropertyIds.filter(
               (id) => !foundIds.includes(id),
@@ -475,8 +568,10 @@ export class PropertiesService {
     let imageUrls: string[] = createImageSectionDto.images || [];
 
     if (images && images.length > 0) {
-      const uploadedUrls =
-        await this.uploadService.uploadMultipleMedia(images, { propertyId });
+      const uploadedUrls = await this.uploadService.uploadMultipleMedia(
+        images,
+        { propertyId },
+      );
       imageUrls = [...imageUrls, ...uploadedUrls];
     }
 
@@ -544,8 +639,10 @@ export class PropertiesService {
     // Faz upload das novas mídias (imagens ou vídeos)
     if (imagesToAdd && imagesToAdd.length > 0) {
       try {
-        const newImageUrls =
-          await this.uploadService.uploadMultipleMedia(imagesToAdd, { propertyId: section.propertyId });
+        const newImageUrls = await this.uploadService.uploadMultipleMedia(
+          imagesToAdd,
+          { propertyId: section.propertyId },
+        );
         updatedImages = [...updatedImages, ...newImageUrls];
       } catch (error) {
         console.error('Erro ao fazer upload das novas mídias:', error);
@@ -823,7 +920,9 @@ export class PropertiesService {
     const property = await this.findOne(propertyId);
     if (!property) return null;
 
-    const uploadResult = await this.uploadService.uploadFile(file, { propertyId });
+    const uploadResult = await this.uploadService.uploadFile(file, {
+      propertyId,
+    });
 
     const propertyFile = this.propertyFileRepository.create({
       propertyId,
@@ -896,7 +995,9 @@ export class PropertiesService {
     }
 
     const uploadPromises = files.map(async (file) => {
-      const uploadResult = await this.uploadService.uploadFile(file, { propertyId });
+      const uploadResult = await this.uploadService.uploadFile(file, {
+        propertyId,
+      });
 
       const propertyFile = this.propertyFileRepository.create({
         propertyId,

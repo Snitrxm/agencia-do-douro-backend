@@ -1,0 +1,33 @@
+{
+  "validation": {
+    "isString": "Le champ {property} doit être une chaîne",
+    "isNotEmpty": "Le champ {property} est requis",
+    "minLength": "Le champ {property} doit avoir au moins {min} caractères",
+    "maxLength": "Le champ {property} doit avoir au maximum {max} caractères",
+    "isNumber": "Le champ {property} doit être un nombre",
+    "min": "Le champ {property} doit être supérieur ou égal à {min}",
+    "isEnum": "Le champ {property} doit être: {values}",
+    "isBoolean": "Le champ {property} doit être vrai ou faux",
+    "isArray": "Le champ {property} doit être un tableau",
+    "isInt": "Le champ {property} doit être un entier",
+    "isUUID": "Le champ {property} doit être un UUID valide",
+    "isEmail": "Le champ {property} doit être un email valide",
+    "isOptional": "Le champ {property} est optionnel"
+  },
+  "fields": {
+    "title_pt": "titre en portugais",
+    "title_en": "titre en anglais",
+    "title_fr": "titre en français",
+    "description_pt": "description en portugais",
+    "description_en": "description en anglais",
+    "description_fr": "description en français",
+    "price": "prix",
+    "bedrooms": "nombre de chambres",
+    "bathrooms": "nombre de salles de bain",
+    "distrito": "district",
+    "concelho": "municipalité",
+    "propertyType": "type de propriété",
+    "transactionType": "type de transaction",
+    "reference": "référence"
+  }
+}

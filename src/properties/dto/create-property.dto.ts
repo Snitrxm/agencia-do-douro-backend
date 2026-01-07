@@ -22,15 +22,16 @@ export class CreatePropertyDto {
   @MaxLength(50, { message: 'A referência deve ter no máximo 50 caracteres' })
   reference?: string;
 
-  @IsString({ message: 'O título deve ser uma string' })
-  @IsNotEmpty({ message: 'O título é obrigatório' })
+  // Portuguese fields (admin writes only in PT, translations are auto-generated)
+  @IsString({ message: 'O título em português deve ser uma string' })
+  @IsNotEmpty({ message: 'O título em português é obrigatório' })
   @MinLength(3, { message: 'O título deve ter no mínimo 3 caracteres' })
   @MaxLength(255, { message: 'O título deve ter no máximo 255 caracteres' })
-  title: string;
+  title_pt: string;
 
-  @IsString({ message: 'A descrição deve ser uma string' })
-  @IsNotEmpty({ message: 'A descrição é obrigatória' })
-  description: string;
+  @IsString({ message: 'A descrição em português deve ser uma string' })
+  @IsNotEmpty({ message: 'A descrição em português é obrigatória' })
+  description_pt: string;
 
   @IsString({ message: 'O tipo de transação deve ser uma string' })
   @IsOptional()
@@ -173,9 +174,9 @@ export class CreatePropertyDto {
   @IsOptional()
   image?: string;
 
-  @IsString({ message: 'As condições de pagamento devem ser uma string' })
+  @IsString({ message: 'As condições de pagamento em português devem ser uma string' })
   @IsOptional()
-  paymentConditions?: string;
+  paymentConditions_pt?: string;
 
   @Transform(({ value }) => {
     if (!value) return [];

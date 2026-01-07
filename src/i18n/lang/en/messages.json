@@ -1,0 +1,39 @@
+{
+  "messages": {
+    "property": {
+      "created": "Property created successfully",
+      "updated": "Property updated successfully",
+      "deleted": "Property deleted successfully",
+      "notFound": "Property not found",
+      "imageRequired": "Main image is required",
+      "sectionDeleted": "Image section deleted successfully",
+      "relatedRemoved": "Related properties removed successfully",
+      "filesUploaded": "{count} file(s) uploaded successfully",
+      "fileDeleted": "File deleted successfully"
+    },
+    "upload": {
+      "success": "File uploaded successfully",
+      "imageSuccess": "Image uploaded successfully",
+      "imageDeleted": "Image deleted successfully",
+      "fileDeleted": "File deleted successfully",
+      "error": "Error uploading file",
+      "uploadFailed": "Upload failed",
+      "deleteFailed": "Delete failed",
+      "invalidFormat": "Invalid file format",
+      "invalidImageFormat": "Only images are allowed (jpg, jpeg, png, gif, webp)",
+      "invalidFileFormat": "Only images (jpg, jpeg, png, gif, webp) and videos (mp4, mov, avi, mkv, webm) are allowed",
+      "noFile": "No file was uploaded",
+      "tooLarge": "File too large",
+      "unsupportedType": "Unsupported file type"
+    },
+    "newsletter": {
+      "deleted": "Newsletter deleted successfully"
+    },
+    "imageSection": {
+      "notFound": "Image section with ID {id} not found"
+    },
+    "file": {
+      "notFound": "File with ID {id} not found"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "validation": {
+    "isString": "The {property} field must be a string",
+    "isNotEmpty": "The {property} field is required",
+    "minLength": "The {property} field must have at least {min} characters",
+    "maxLength": "The {property} field must have at most {max} characters",
+    "isNumber": "The {property} field must be a number",
+    "min": "The {property} field must be greater than or equal to {min}",
+    "isEnum": "The {property} field must be: {values}",
+    "isBoolean": "The {property} field must be true or false",
+    "isArray": "The {property} field must be an array",
+    "isInt": "The {property} field must be an integer",
+    "isUUID": "The {property} field must be a valid UUID",
+    "isEmail": "The {property} field must be a valid email",
+    "isOptional": "The {property} field is optional"
+  },
+  "fields": {
+    "title_pt": "title in Portuguese",
+    "title_en": "title in English",
+    "title_fr": "title in French",
+    "description_pt": "description in Portuguese",
+    "description_en": "description in English",
+    "description_fr": "description in French",
+    "price": "price",
+    "bedrooms": "number of bedrooms",
+    "bathrooms": "number of bathrooms",
+    "distrito": "district",
+    "concelho": "municipality",
+    "propertyType": "property type",
+    "transactionType": "transaction type",
+    "reference": "reference"
+  }
+}

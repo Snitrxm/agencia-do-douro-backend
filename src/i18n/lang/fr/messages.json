@@ -1,0 +1,39 @@
+{
+  "messages": {
+    "property": {
+      "created": "Propriété créée avec succès",
+      "updated": "Propriété mise à jour avec succès",
+      "deleted": "Propriété supprimée avec succès",
+      "notFound": "Propriété non trouvée",
+      "imageRequired": "L'image principale est requise",
+      "sectionDeleted": "Section d'images supprimée avec succès",
+      "relatedRemoved": "Propriétés associées supprimées avec succès",
+      "filesUploaded": "{count} fichier(s) téléchargé(s) avec succès",
+      "fileDeleted": "Fichier supprimé avec succès"
+    },
+    "upload": {
+      "success": "Fichier téléchargé avec succès",
+      "imageSuccess": "Image téléchargée avec succès",
+      "imageDeleted": "Image supprimée avec succès",
+      "fileDeleted": "Fichier supprimé avec succès",
+      "error": "Erreur lors du téléchargement du fichier",
+      "uploadFailed": "Échec du téléchargement",
+      "deleteFailed": "Échec de la suppression",
+      "invalidFormat": "Format de fichier invalide",
+      "invalidImageFormat": "Seules les images sont autorisées (jpg, jpeg, png, gif, webp)",
+      "invalidFileFormat": "Seules les images (jpg, jpeg, png, gif, webp) et les vidéos (mp4, mov, avi, mkv, webm) sont autorisées",
+      "noFile": "Aucun fichier n'a été téléchargé",
+      "tooLarge": "Fichier trop volumineux",
+      "unsupportedType": "Type de fichier non pris en charge"
+    },
+    "newsletter": {
+      "deleted": "Newsletter supprimée avec succès"
+    },
+    "imageSection": {
+      "notFound": "Section d'images avec ID {id} non trouvée"
+    },
+    "file": {
+      "notFound": "Fichier avec ID {id} non trouvé"
+    }
+  }
+}

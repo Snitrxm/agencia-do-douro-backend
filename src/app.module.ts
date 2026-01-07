@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { I18nConfigModule } from './i18n/i18n.module';
 import { PropertiesModule } from './properties/properties.module';
 import { UploadModule } from './upload/upload.module';
 import { NewslettersModule } from './newsletters/newsletters.module';
@@ -23,6 +24,7 @@ import { TeamMembersModule } from './team-members/team-members.module';
       }),
       inject: [ConfigService],
     }),
+    I18nConfigModule,
     PropertiesModule,
     UploadModule,
     NewslettersModule,

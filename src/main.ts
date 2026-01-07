@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { I18nValidationPipe, I18nValidationExceptionFilter } from 'nestjs-i18n';
 import { join } from 'path';
 import * as express from 'express';
 
@@ -37,11 +37,19 @@ async function bootstrap() {
     credentials: false,
   });
 
+  // Use I18nValidationPipe for internationalized validation messages
   app.useGlobalPipes(
-    new ValidationPipe({
+    new I18nValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+    }),
+  );
+
+  // Add exception filter for i18n validation errors
+  app.useGlobalFilters(
+    new I18nValidationExceptionFilter({
+      detailedErrors: false,
     }),
   );
 

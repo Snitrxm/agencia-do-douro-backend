@@ -1,0 +1,39 @@
+{
+  "messages": {
+    "property": {
+      "created": "Propriedade criada com sucesso",
+      "updated": "Propriedade atualizada com sucesso",
+      "deleted": "Propriedade eliminada com sucesso",
+      "notFound": "Propriedade não encontrada",
+      "imageRequired": "A imagem principal é obrigatória",
+      "sectionDeleted": "Seção de imagens deletada com sucesso",
+      "relatedRemoved": "Propriedades relacionadas removidas com sucesso",
+      "filesUploaded": "{count} arquivo(s) enviado(s) com sucesso",
+      "fileDeleted": "Arquivo deletado com sucesso"
+    },
+    "upload": {
+      "success": "Ficheiro enviado com sucesso",
+      "imageSuccess": "Imagem enviada com sucesso",
+      "imageDeleted": "Imagem deletada com sucesso",
+      "fileDeleted": "Arquivo deletado com sucesso",
+      "error": "Erro ao enviar ficheiro",
+      "uploadFailed": "Falha ao fazer upload",
+      "deleteFailed": "Falha ao deletar",
+      "invalidFormat": "Formato de ficheiro inválido",
+      "invalidImageFormat": "Apenas imagens são permitidas (jpg, jpeg, png, gif, webp)",
+      "invalidFileFormat": "Apenas imagens (jpg, jpeg, png, gif, webp) e vídeos (mp4, mov, avi, mkv, webm) são permitidos",
+      "noFile": "Nenhum arquivo foi enviado",
+      "tooLarge": "Ficheiro demasiado grande",
+      "unsupportedType": "Tipo de arquivo não suportado"
+    },
+    "newsletter": {
+      "deleted": "Newsletter deletada com sucesso"
+    },
+    "imageSection": {
+      "notFound": "Seção de imagens com ID {id} não encontrada"
+    },
+    "file": {
+      "notFound": "Arquivo com ID {id} não encontrado"
+    }
+  }
+}

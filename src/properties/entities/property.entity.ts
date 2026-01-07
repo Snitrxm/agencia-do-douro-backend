@@ -23,11 +23,25 @@ export class Property {
   @Column({ type: 'varchar', length: 50, nullable: true })
   reference: string;
 
+  // Multilingual fields - Portuguese is the source language
   @Column({ type: 'varchar', length: 255 })
-  title: string;
+  title_pt: string;
 
   @Column({ type: 'text' })
-  description: string;
+  description_pt: string;
+
+  // Auto-translated fields (can be implemented later with OpenAI/DeepL)
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  title_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  description_en: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  title_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  description_fr: string;
 
   @Column({
     type: 'enum',
@@ -102,7 +116,13 @@ export class Property {
   image: string;
 
   @Column({ type: 'text', nullable: true })
-  paymentConditions: string;
+  paymentConditions_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  paymentConditions_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  paymentConditions_fr: string;
 
   @Column({ type: 'json', nullable: true })
   features: string[];
