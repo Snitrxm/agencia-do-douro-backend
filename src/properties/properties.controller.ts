@@ -97,6 +97,16 @@ export class PropertiesController {
     return this.propertiesService.findFeatured(lang || 'pt');
   }
 
+  @Get('search')
+  search(
+    @Query('q') query: string,
+    @Query('limit') limit?: string,
+    @Query('lang') lang?: string,
+  ) {
+    const limitNumber = limit ? parseInt(limit, 10) : 5;
+    return this.propertiesService.search(query, limitNumber, lang || 'pt');
+  }
+
   @Get(':id')
   findOne(
     @Param('id') id: string,

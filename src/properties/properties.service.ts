@@ -412,6 +412,52 @@ export class PropertiesService {
     );
   }
 
+  /**
+   * Busca simplificada de propriedades por termo
+   * Ideal para autocomplete/sugestões na hero
+   */
+  async search(
+    query: string,
+    limit: number = 5,
+    locale: string = 'pt',
+  ): Promise<any[]> {
+    if (!query || query.trim().length < 2) {
+      return [];
+    }
+
+    const titleField = `title_${locale}` as keyof Property;
+    const descriptionField = `description_${locale}` as keyof Property;
+
+    const queryBuilder = this.propertyRepository
+      .createQueryBuilder('property')
+      .where('property.status IN (:...statuses)', {
+        statuses: ['active', 'reserved'],
+      })
+      .andWhere(
+        `(property.${titleField} LIKE :search OR property.${descriptionField} LIKE :search OR property.reference LIKE :search OR property.distrito LIKE :search OR property.concelho LIKE :search)`,
+        { search: `%${query}%` },
+      )
+      .orderBy('property.createdAt', 'DESC')
+      .take(limit);
+
+    const properties = await queryBuilder.getMany();
+
+    // Retorna dados simplificados
+    return properties.map((property) => ({
+      id: property.id,
+      title: property[titleField] || property.title_pt,
+      image: property.image,
+      price: property.price,
+      transactionType: property.transactionType,
+      propertyType: property.propertyType,
+      distrito: property.distrito,
+      concelho: property.concelho,
+      bedrooms: property.bedrooms,
+      bathrooms: property.bathrooms,
+      usefulArea: property.usefulArea,
+    }));
+  }
+
   async toggleFeatured(id: string): Promise<Property | null> {
     const property = await this.findOne(id);
     if (!property) {
