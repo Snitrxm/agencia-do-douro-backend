@@ -85,11 +85,11 @@ export class PropertiesController {
   }
 
   @Get()
-  findAll(
-    @Query() filterPropertyDto: FilterPropertyDto,
-    @Query('lang') lang?: string,
-  ) {
-    return this.propertiesService.findAll(filterPropertyDto, lang || 'pt');
+  findAll(@Query() filterPropertyDto: FilterPropertyDto) {
+    return this.propertiesService.findAll(
+      filterPropertyDto,
+      filterPropertyDto.lang || 'pt',
+    );
   }
 
   @Get('featured/list')

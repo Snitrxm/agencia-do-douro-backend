@@ -185,4 +185,12 @@ export class FilterPropertyDto {
   @Type(() => Number)
   @Min(1, { message: 'O limite deve ser maior ou igual a 1' })
   limit?: number;
+
+  // Idioma
+  @IsString({ message: 'O idioma deve ser uma string' })
+  @IsOptional()
+  @IsEnum(['pt', 'en', 'fr'], {
+    message: 'O idioma deve ser: pt, en ou fr',
+  })
+  lang?: string;
 }
