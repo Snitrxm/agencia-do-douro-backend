@@ -109,6 +109,9 @@ export class Property {
   @Column({ type: 'varchar', length: 100 })
   concelho: string;
 
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  freguesia: string;
+
   @Column({ type: 'varchar', length: 255, nullable: true })
   address: string;
 

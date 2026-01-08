@@ -155,6 +155,11 @@ export class CreatePropertyDto {
   @MaxLength(100, { message: 'O concelho deve ter no máximo 100 caracteres' })
   concelho: string;
 
+  @IsString({ message: 'A freguesia deve ser uma string' })
+  @IsOptional()
+  @MaxLength(100, { message: 'A freguesia deve ter no máximo 100 caracteres' })
+  freguesia?: string;
+
   @IsString({ message: 'O endereço deve ser uma string' })
   @IsOptional()
   @MaxLength(255, { message: 'O endereço deve ter no máximo 255 caracteres' })
