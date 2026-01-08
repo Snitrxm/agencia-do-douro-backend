@@ -7,6 +7,7 @@ import { UploadModule } from './upload/upload.module';
 import { NewslettersModule } from './newsletters/newsletters.module';
 import { SiteConfigModule } from './site-config/site-config.module';
 import { TeamMembersModule } from './team-members/team-members.module';
+import { DesiredZonesModule } from './desired-zones/desired-zones.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { TeamMembersModule } from './team-members/team-members.module';
     NewslettersModule,
     SiteConfigModule,
     TeamMembersModule,
+    DesiredZonesModule,
   ],
   controllers: [],
   providers: [],
