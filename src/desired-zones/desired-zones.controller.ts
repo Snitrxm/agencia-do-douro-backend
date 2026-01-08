@@ -50,7 +50,7 @@ export class DesiredZonesController {
     }
 
     const imageUrl = await this.uploadService.uploadImage(files[0]);
-    createDesiredZoneDto.image = imageUrl;
+    createDesiredZoneDto.image = imageUrl.url;
 
     return this.desiredZonesService.create(createDesiredZoneDto);
   }
@@ -93,7 +93,7 @@ export class DesiredZonesController {
   ) {
     if (files && files.length > 0) {
       const imageUrl = await this.uploadService.uploadImage(files[0]);
-      updateDesiredZoneDto.image = imageUrl;
+      updateDesiredZoneDto.image = imageUrl.url;
     }
 
     return this.desiredZonesService.update(id, updateDesiredZoneDto);
