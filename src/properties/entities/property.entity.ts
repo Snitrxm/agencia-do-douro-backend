@@ -127,8 +127,8 @@ export class Property {
   @Column({ type: 'text', nullable: true })
   paymentConditions_fr: string;
 
-  @Column({ type: 'json', nullable: true })
-  features: string[];
+  @Column({ type: 'text', nullable: true })
+  features: string;
 
   @Column({
     type: 'enum',

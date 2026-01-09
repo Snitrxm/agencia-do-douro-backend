@@ -183,25 +183,9 @@ export class CreatePropertyDto {
   @IsOptional()
   paymentConditions_pt?: string;
 
-  @Transform(({ value }) => {
-    if (!value) return [];
-    if (Array.isArray(value)) return value;
-    if (typeof value === 'string') {
-      try {
-        return JSON.parse(value);
-      } catch {
-        return [value];
-      }
-    }
-    return [];
-  })
-  @IsArray({ message: 'As características devem ser um array' })
-  @IsString({
-    each: true,
-    message: 'Cada característica deve ser uma string',
-  })
+  @IsString({ message: 'As características devem ser uma string' })
   @IsOptional()
-  features?: string[];
+  features?: string;
 
   @IsString({ message: 'O status deve ser uma string' })
   @IsOptional()

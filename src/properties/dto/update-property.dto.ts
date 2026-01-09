@@ -189,6 +189,10 @@ export class UpdatePropertyDto {
   @IsOptional()
   paymentConditions_pt?: string;
 
+  @IsString({ message: 'As características devem ser uma string' })
+  @IsOptional()
+  features?: string;
+
   @IsString({ message: 'O status deve ser uma string' })
   @IsOptional()
   @IsEnum(['active', 'inactive', 'sold', 'rented', 'reserved'], {
