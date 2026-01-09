@@ -404,7 +404,6 @@ export class PropertiesService {
     const properties = await this.propertyRepository.find({
       where: { isFeatured: true, status: 'active' },
       order: { createdAt: 'DESC' },
-      take: 3,
     });
 
     return properties.map((property) =>
