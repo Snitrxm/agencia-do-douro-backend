@@ -73,7 +73,6 @@ export class DesiredZonesController {
   @Patch(':id')
   @UseInterceptors(
     FilesInterceptor('image', 1, {
-      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
       fileFilter: (_req, file, cb) => {
         const isImage = file.mimetype.match(/^image\/(jpg|jpeg|png|gif|webp)$/);
         if (!isImage) {

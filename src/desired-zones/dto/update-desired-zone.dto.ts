@@ -9,9 +9,6 @@ import {
 import { Type, Transform } from 'class-transformer';
 
 export class UpdateDesiredZoneDto {
-  @IsString()
-  id: string;
-
   @IsString({ message: 'O nome deve ser uma string' })
   @IsOptional()
   @MaxLength(100, { message: 'O nome deve ter no máximo 100 caracteres' })
