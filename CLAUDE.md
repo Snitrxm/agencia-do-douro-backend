@@ -153,3 +153,34 @@ location /uploads {
 - `POST /upload/image` - Upload single image (max 5MB)
 - `POST /upload/images` - Upload multiple images (max 10 files, 5MB each)
 - Supported formats: JPG, JPEG, PNG, GIF, WebP (automatically converted to WebP)
+
+### Translation Configuration (DeepL)
+This project uses DeepL API for automatic translation of property content from Portuguese to English and French:
+- **Translation Service**: Located in `src/translation/translation.service.ts`
+- **Auto-translation**: Properties are automatically translated when created or updated
+- **Supported fields**: title, description, and paymentConditions
+- **Target languages**: English (en-GB) and French (fr)
+
+#### Environment Variables
+```
+DEEPL_API_KEY=your-deepl-api-key-here
+```
+
+#### How It Works
+1. When a property is created or updated with Portuguese content (title_pt, description_pt, paymentConditions_pt)
+2. The `translateProperty` method automatically translates these fields to English and French
+3. Translations are done in parallel using Promise.all for better performance
+4. If translation fails, empty strings are returned to prevent blocking property operations
+5. Translation results are stored in the database alongside the original Portuguese content
+
+#### Getting a DeepL API Key
+1. Sign up at https://www.deepl.com/pro-api
+2. Choose a plan (Free tier available with 500,000 characters/month)
+3. Copy your API key from the account dashboard
+4. Add it to your `.env` file
+
+#### Important Notes
+- Translation is optional - if DEEPL_API_KEY is not configured, translations will be empty strings
+- The service logs warnings if the API key is missing
+- Translation errors are logged but don't prevent property creation/updates
+- All translations preserve the original Portuguese text

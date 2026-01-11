@@ -19,6 +19,7 @@ import {
 } from './dto/manage-related-properties.dto';
 import { CreatePropertyFileDto } from './dto/create-property-file.dto';
 import { UpdatePropertyFileDto } from './dto/update-property-file.dto';
+import { TranslationService } from '../translation/translation.service';
 
 @Injectable()
 export class PropertiesService {
@@ -32,12 +33,11 @@ export class PropertiesService {
     @InjectRepository(PropertyFile)
     private propertyFileRepository: Repository<PropertyFile>,
     private uploadService: UploadService,
+    private translationService: TranslationService,
   ) {}
 
   /**
-   * Auto-translate property content from Portuguese to English and French
-   * TODO: Implement translation using OpenAI/DeepL API
-   * For now, leaves EN/FR fields empty
+   * Auto-translate property content from Portuguese to English and French using DeepL API
    */
   private async translateProperty(propertyData: Partial<Property>): Promise<{
     title_en?: string;
@@ -47,14 +47,7 @@ export class PropertiesService {
     paymentConditions_en?: string;
     paymentConditions_fr?: string;
   }> {
-    // TODO: Implement automatic translation here
-    // Example with OpenAI:
-    // const titleEn = await this.openaiService.translate(propertyData.title_pt, 'en');
-    // const titleFr = await this.openaiService.translate(propertyData.title_pt, 'fr');
-    // return { title_en: titleEn, title_fr: titleFr, ... };
-
-    // For now, return empty translations
-    return {
+    const translations = {
       title_en: '',
       title_fr: '',
       description_en: '',
@@ -62,6 +55,45 @@ export class PropertiesService {
       paymentConditions_en: '',
       paymentConditions_fr: '',
     };
+
+    try {
+      // Translate title
+      if (propertyData.title_pt) {
+        const [titleEn, titleFr] = await Promise.all([
+          this.translationService.translate(propertyData.title_pt, 'en-GB'),
+          this.translationService.translate(propertyData.title_pt, 'fr'),
+        ]);
+        translations.title_en = titleEn;
+        translations.title_fr = titleFr;
+      }
+
+      // Translate description
+      if (propertyData.description_pt) {
+        const [descriptionEn, descriptionFr] = await Promise.all([
+          this.translationService.translate(propertyData.description_pt, 'en-GB'),
+          this.translationService.translate(propertyData.description_pt, 'fr'),
+        ]);
+        translations.description_en = descriptionEn;
+        translations.description_fr = descriptionFr;
+      }
+
+      // Translate payment conditions
+      if (propertyData.paymentConditions_pt) {
+        const [paymentConditionsEn, paymentConditionsFr] = await Promise.all([
+          this.translationService.translate(propertyData.paymentConditions_pt, 'en-GB'),
+          this.translationService.translate(propertyData.paymentConditions_pt, 'fr'),
+        ]);
+        translations.paymentConditions_en = paymentConditionsEn;
+        translations.paymentConditions_fr = paymentConditionsFr;
+      }
+
+      this.logger.log('Property translations completed successfully');
+    } catch (error) {
+      this.logger.error('Error translating property:', error);
+      // Return empty translations on error to prevent blocking the property creation/update
+    }
+
+    return translations;
   }
 
   /**
