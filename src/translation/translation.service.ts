@@ -9,7 +9,9 @@ export class TranslationService {
   constructor() {
     const apiKey = process.env.DEEPL_API_KEY;
     if (!apiKey) {
-      this.logger.warn('DEEPL_API_KEY not found in environment variables. Translation service will not work.');
+      this.logger.warn(
+        'DEEPL_API_KEY not found in environment variables. Translation service will not work.',
+      );
     }
     this.translator = new deepl.Translator(apiKey || '');
   }
@@ -20,7 +22,10 @@ export class TranslationService {
    * @param targetLang Target language code ('en-GB' or 'fr')
    * @returns Translated text or empty string if translation fails
    */
-  async translate(text: string | null | undefined, targetLang: 'en-GB' | 'fr'): Promise<string> {
+  async translate(
+    text: string | null | undefined,
+    targetLang: 'en-GB' | 'fr',
+  ): Promise<string> {
     if (!text || text.trim() === '') {
       return '';
     }
@@ -36,9 +41,12 @@ export class TranslationService {
         'pt',
         targetLang,
       );
-      return result.text;
+      return (result as deepl.TextResult).text;
     } catch (error) {
-      this.logger.error(`Translation error for target language ${targetLang}:`, error);
+      this.logger.error(
+        `Translation error for target language ${targetLang}:`,
+        error,
+      );
       return '';
     }
   }
@@ -49,7 +57,10 @@ export class TranslationService {
    * @param targetLang Target language code ('en-GB' or 'fr')
    * @returns Array of translated texts
    */
-  async translateBatch(texts: string[], targetLang: 'en-GB' | 'fr'): Promise<string[]> {
+  async translateBatch(
+    texts: string[],
+    targetLang: 'en-GB' | 'fr',
+  ): Promise<string[]> {
     if (!texts || texts.length === 0) {
       return [];
     }
@@ -65,9 +76,14 @@ export class TranslationService {
         'pt',
         targetLang,
       );
-      return Array.isArray(results) ? results.map(r => r.text) : [results.text];
+      return Array.isArray(results)
+        ? results.map((r) => (r as deepl.TextResult).text)
+        : [(results as deepl.TextResult).text];
     } catch (error) {
-      this.logger.error(`Batch translation error for target language ${targetLang}:`, error);
+      this.logger.error(
+        `Batch translation error for target language ${targetLang}:`,
+        error,
+      );
       return texts.map(() => '');
     }
   }
