@@ -15,4 +15,8 @@ export class UpdateTeamMemberDto {
   @IsEmail()
   @MaxLength(255)
   email?: string;
+
+  @IsOptional()
+  @IsString()
+  photo?: string;
 }

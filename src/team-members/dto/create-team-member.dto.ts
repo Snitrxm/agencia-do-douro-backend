@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class CreateTeamMemberDto {
   @IsNotEmpty()
@@ -15,4 +15,8 @@ export class CreateTeamMemberDto {
   @IsEmail()
   @MaxLength(255)
   email: string;
+
+  @IsOptional()
+  @IsString()
+  photo?: string;
 }

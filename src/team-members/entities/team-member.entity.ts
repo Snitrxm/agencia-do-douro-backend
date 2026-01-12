@@ -22,6 +22,9 @@ export class TeamMember {
   @Column({ type: 'varchar', length: 255 })
   email: string;
 
+  @Column({ type: 'text', nullable: true })
+  photo: string;
+
   @OneToMany(() => Property, (property) => property.teamMember)
   properties: Property[];
 
