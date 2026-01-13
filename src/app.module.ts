@@ -8,6 +8,7 @@ import { NewslettersModule } from './newsletters/newsletters.module';
 import { SiteConfigModule } from './site-config/site-config.module';
 import { TeamMembersModule } from './team-members/team-members.module';
 import { DesiredZonesModule } from './desired-zones/desired-zones.module';
+import { PodcastTopicsModule } from './podcast-topics/podcast-topics.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { DesiredZonesModule } from './desired-zones/desired-zones.module';
     SiteConfigModule,
     TeamMembersModule,
     DesiredZonesModule,
+    PodcastTopicsModule,
   ],
   controllers: [],
   providers: [],

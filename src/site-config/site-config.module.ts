@@ -3,9 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SiteConfigService } from './site-config.service';
 import { SiteConfigController } from './site-config.controller';
 import { SiteConfig } from './entities/site-config.entity';
+import { UploadModule } from '../upload/upload.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SiteConfig])],
+  imports: [TypeOrmModule.forFeature([SiteConfig]), UploadModule],
   controllers: [SiteConfigController],
   providers: [SiteConfigService],
   exports: [SiteConfigService],

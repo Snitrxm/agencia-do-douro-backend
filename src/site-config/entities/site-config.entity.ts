@@ -35,6 +35,9 @@ export class SiteConfig {
   @Column({ type: 'int', default: 0 })
   eurosEmTransacoes: number;
 
+  @Column({ type: 'text', nullable: true })
+  apresentadoraImage: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
