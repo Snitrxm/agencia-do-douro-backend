@@ -9,6 +9,9 @@ import { SiteConfigModule } from './site-config/site-config.module';
 import { TeamMembersModule } from './team-members/team-members.module';
 import { DesiredZonesModule } from './desired-zones/desired-zones.module';
 import { PodcastTopicsModule } from './podcast-topics/podcast-topics.module';
+import { AboutUsContentModule } from './about-us-content/about-us-content.module';
+import { CultureItemsModule } from './culture-items/culture-items.module';
+import { ServiceItemsModule } from './service-items/service-items.module';
 
 @Module({
   imports: [
@@ -34,6 +37,9 @@ import { PodcastTopicsModule } from './podcast-topics/podcast-topics.module';
     TeamMembersModule,
     DesiredZonesModule,
     PodcastTopicsModule,
+    AboutUsContentModule,
+    CultureItemsModule,
+    ServiceItemsModule,
   ],
   controllers: [],
   providers: [],
