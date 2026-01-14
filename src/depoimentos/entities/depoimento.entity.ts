@@ -14,8 +14,14 @@ export class Depoimento {
   @Column({ type: 'varchar' })
   clientName: string;
 
-  @Column({ type: 'varchar' })
-  text: string;
+  @Column({ type: 'text' })
+  text_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  text_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  text_fr: string;
 
   @CreateDateColumn()
   createdAt: Date;

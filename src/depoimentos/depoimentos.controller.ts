@@ -8,6 +8,7 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { DepoimentosService } from './depoimentos.service';
 import { CreateDepoimentoDto } from './dto/create-depoimento.dto';
@@ -23,7 +24,10 @@ export class DepoimentosController {
   }
 
   @Get()
-  findAll() {
+  findAll(@Query('lang') lang?: string) {
+    if (lang) {
+      return this.service.findAllByLocale(lang);
+    }
     return this.service.findAll();
   }
 

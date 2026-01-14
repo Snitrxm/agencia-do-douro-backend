@@ -7,5 +7,5 @@ export class CreateDepoimentoDto {
 
   @IsString({ message: 'O texto deve ser uma string' })
   @IsNotEmpty({ message: 'O texto é obrigatório' })
-  text: string;
+  text_pt: string;
 }

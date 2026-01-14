@@ -7,5 +7,5 @@ export class UpdateDepoimentoDto {
 
   @IsString({ message: 'O texto deve ser uma string' })
   @IsOptional()
-  text?: string;
+  text_pt?: string;
 }
