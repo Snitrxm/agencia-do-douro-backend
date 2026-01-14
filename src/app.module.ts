@@ -12,6 +12,7 @@ import { PodcastTopicsModule } from './podcast-topics/podcast-topics.module';
 import { AboutUsContentModule } from './about-us-content/about-us-content.module';
 import { CultureItemsModule } from './culture-items/culture-items.module';
 import { ServiceItemsModule } from './service-items/service-items.module';
+import { DepoimentosModule } from './depoimentos/depoimentos.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ServiceItemsModule } from './service-items/service-items.module';
     AboutUsContentModule,
     CultureItemsModule,
     ServiceItemsModule,
+    DepoimentosModule,
   ],
   controllers: [],
   providers: [],
