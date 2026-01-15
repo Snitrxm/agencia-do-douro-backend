@@ -187,6 +187,10 @@ export class CreatePropertyDto {
   @IsOptional()
   features?: string;
 
+  @IsString({ message: 'O campo "Porque escolher" deve ser uma string' })
+  @IsOptional()
+  whyChoose?: string;
+
   @IsString({ message: 'O status deve ser uma string' })
   @IsOptional()
   @IsEnum(['active', 'inactive', 'sold', 'rented', 'reserved'], {

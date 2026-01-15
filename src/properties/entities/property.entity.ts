@@ -130,6 +130,9 @@ export class Property {
   @Column({ type: 'text', nullable: true })
   features: string;
 
+  @Column({ type: 'text', nullable: true })
+  whyChoose: string;
+
   @Column({
     type: 'enum',
     enum: ['active', 'inactive', 'sold', 'rented', 'reserved'],
