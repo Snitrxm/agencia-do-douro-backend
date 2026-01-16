@@ -180,9 +180,9 @@ export class PropertiesService {
       city: finalCity,
       relatedProperties,
       teamMember: teamMemberId ? ({ id: teamMemberId } as any) : null,
-    });
+    } as any);
 
-    return this.propertyRepository.save(property);
+    return this.propertyRepository.save(property as any);
   }
 
   async createWithId(
