@@ -32,4 +32,9 @@ export class UpdateDesiredZoneDto {
   @IsBoolean({ message: 'O campo ativo deve ser verdadeiro ou falso' })
   @IsOptional()
   isActive?: boolean;
+
+  @IsString({ message: 'O país deve ser uma string' })
+  @IsOptional()
+  @MaxLength(2, { message: 'O código do país deve ter no máximo 2 caracteres' })
+  country?: string;
 }

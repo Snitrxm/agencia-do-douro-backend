@@ -23,9 +23,15 @@ export class DesiredZonesService {
     });
   }
 
-  async findActive(): Promise<DesiredZone[]> {
+  async findActive(country?: string): Promise<DesiredZone[]> {
+    const where: { isActive: boolean; country?: string } = { isActive: true };
+    
+    if (country) {
+      where.country = country;
+    }
+
     return this.desiredZoneRepository.find({
-      where: { isActive: true },
+      where,
       order: { displayOrder: 'ASC', createdAt: 'ASC' },
     });
   }

@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
   HttpCode,
   HttpStatus,
   UseInterceptors,
@@ -61,8 +62,8 @@ export class DesiredZonesController {
   }
 
   @Get('active')
-  findActive() {
-    return this.desiredZonesService.findActive();
+  findActive(@Query('country') country?: string) {
+    return this.desiredZonesService.findActive(country);
   }
 
   @Get(':id')
