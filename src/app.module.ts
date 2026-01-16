@@ -11,6 +11,7 @@ import { DesiredZonesModule } from './desired-zones/desired-zones.module';
 import { PodcastTopicsModule } from './podcast-topics/podcast-topics.module';
 import { PodcastContentModule } from './podcast-content/podcast-content.module';
 import { AboutUsContentModule } from './about-us-content/about-us-content.module';
+import { SellPropertyContentModule } from './sell-property-content/sell-property-content.module';
 import { CultureItemsModule } from './culture-items/culture-items.module';
 import { ServiceItemsModule } from './service-items/service-items.module';
 import { DepoimentosModule } from './depoimentos/depoimentos.module';
@@ -41,6 +42,7 @@ import { DepoimentosModule } from './depoimentos/depoimentos.module';
     PodcastTopicsModule,
     PodcastContentModule,
     AboutUsContentModule,
+    SellPropertyContentModule,
     CultureItemsModule,
     ServiceItemsModule,
     DepoimentosModule,
