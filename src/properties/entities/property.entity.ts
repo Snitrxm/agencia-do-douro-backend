@@ -102,11 +102,15 @@ export class Property {
   @Column({ type: 'varchar', length: 255, nullable: true })
   deliveryDate: string;
 
-  // Location fields for Portuguese market
-  @Column({ type: 'varchar', length: 100 })
+  // Country code - ISO 3166-1 alpha-2 (PT, ES, FR, etc.)
+  @Column({ type: 'varchar', length: 2, default: 'PT' })
+  country: string;
+
+  // Location fields for Portuguese market (nullable for non-PT countries)
+  @Column({ type: 'varchar', length: 100, nullable: true })
   distrito: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   concelho: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
@@ -114,6 +118,13 @@ export class Property {
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   address: string;
+
+  // Generic location fields (for all countries - normalized)
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  region: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  city: string;
 
   @Column({ type: 'varchar', nullable: false })
   image: string;

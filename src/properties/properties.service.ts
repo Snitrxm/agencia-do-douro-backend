@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Property } from './entities/property.entity';
@@ -118,8 +118,35 @@ export class PropertiesService {
 
   async create(createPropertyDto: CreatePropertyDto): Promise<Property> {
     // Extrair campos que precisam ser tratados separadamente
-    const { teamMemberId, relatedPropertyIds, ...propertyData } =
-      createPropertyDto;
+    const {
+      teamMemberId,
+      relatedPropertyIds,
+      country = 'PT',
+      distrito,
+      concelho,
+      region,
+      city,
+      ...propertyData
+    } = createPropertyDto;
+
+    // Validação condicional por país
+    if (country === 'PT') {
+      if (!distrito || !concelho) {
+        throw new BadRequestException(
+          'Para Portugal, distrito e concelho são obrigatórios',
+        );
+      }
+    } else {
+      if (!region || !city) {
+        throw new BadRequestException(
+          'Para outros países, region e city são obrigatórios',
+        );
+      }
+    }
+
+    // Para Portugal, sincronizar region/city com distrito/concelho
+    const finalRegion = country === 'PT' ? distrito : region;
+    const finalCity = country === 'PT' ? concelho : city;
 
     // Auto-translate to EN/FR (TODO: implement translation API)
     const translations = await this.translateProperty(propertyData as any);
@@ -146,6 +173,11 @@ export class PropertiesService {
     const property = this.propertyRepository.create({
       ...propertyData,
       ...translations, // Add auto-translated fields
+      country,
+      distrito: country === 'PT' ? distrito : null,
+      concelho: country === 'PT' ? concelho : null,
+      region: finalRegion,
+      city: finalCity,
       relatedProperties,
       teamMember: teamMemberId ? ({ id: teamMemberId } as any) : null,
     });
@@ -212,8 +244,11 @@ export class PropertiesService {
       propertyState,
       energyClass,
       status,
+      country,
       distrito,
       concelho,
+      region,
+      city,
       minArea,
       maxArea,
       bedrooms,
@@ -288,6 +323,9 @@ export class PropertiesService {
     }
 
     // Filtros de localização
+    if (country) {
+      queryBuilder.andWhere('property.country = :country', { country });
+    }
     if (distrito) {
       queryBuilder.andWhere('property.distrito LIKE :distrito', {
         distrito: `%${distrito}%`,
@@ -296,6 +334,16 @@ export class PropertiesService {
     if (concelho) {
       queryBuilder.andWhere('property.concelho LIKE :concelho', {
         concelho: `%${concelho}%`,
+      });
+    }
+    if (region) {
+      queryBuilder.andWhere('property.region LIKE :region', {
+        region: `%${region}%`,
+      });
+    }
+    if (city) {
+      queryBuilder.andWhere('property.city LIKE :city', {
+        city: `%${city}%`,
       });
     }
 

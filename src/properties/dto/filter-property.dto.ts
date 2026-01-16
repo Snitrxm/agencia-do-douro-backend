@@ -67,6 +67,10 @@ export class FilterPropertyDto {
   isEmpreendimento?: boolean;
 
   // Filtros de localização
+  @IsString({ message: 'O código do país deve ser uma string' })
+  @IsOptional()
+  country?: string;
+
   @IsString({ message: 'O distrito deve ser uma string' })
   @IsOptional()
   distrito?: string;
@@ -74,6 +78,14 @@ export class FilterPropertyDto {
   @IsString({ message: 'O concelho deve ser uma string' })
   @IsOptional()
   concelho?: string;
+
+  @IsString({ message: 'A região deve ser uma string' })
+  @IsOptional()
+  region?: string;
+
+  @IsString({ message: 'A cidade deve ser uma string' })
+  @IsOptional()
+  city?: string;
 
   // Filtros de área (área útil)
   @IsNumber({}, { message: 'A área mínima deve ser um número' })

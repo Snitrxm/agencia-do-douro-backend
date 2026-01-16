@@ -145,15 +145,30 @@ export class CreatePropertyDto {
   })
   deliveryDate?: string;
 
+  @IsString({ message: 'O código do país deve ser uma string' })
+  @IsOptional()
+  @MaxLength(2, { message: 'O código do país deve ter 2 caracteres (ISO)' })
+  country?: string;
+
   @IsString({ message: 'O distrito deve ser uma string' })
-  @IsNotEmpty({ message: 'O distrito é obrigatório' })
+  @IsOptional()
   @MaxLength(100, { message: 'O distrito deve ter no máximo 100 caracteres' })
-  distrito: string;
+  distrito?: string;
 
   @IsString({ message: 'O concelho deve ser uma string' })
-  @IsNotEmpty({ message: 'O concelho é obrigatório' })
+  @IsOptional()
   @MaxLength(100, { message: 'O concelho deve ter no máximo 100 caracteres' })
-  concelho: string;
+  concelho?: string;
+
+  @IsString({ message: 'A região deve ser uma string' })
+  @IsOptional()
+  @MaxLength(100, { message: 'A região deve ter no máximo 100 caracteres' })
+  region?: string;
+
+  @IsString({ message: 'A cidade deve ser uma string' })
+  @IsOptional()
+  @MaxLength(100, { message: 'A cidade deve ter no máximo 100 caracteres' })
+  city?: string;
 
   @IsString({ message: 'A freguesia deve ser uma string' })
   @IsOptional()
