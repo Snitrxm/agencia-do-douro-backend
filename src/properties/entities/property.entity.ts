@@ -142,7 +142,19 @@ export class Property {
   features: string;
 
   @Column({ type: 'text', nullable: true })
+  features_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  features_fr: string;
+
+  @Column({ type: 'text', nullable: true })
   whyChoose: string;
+
+  @Column({ type: 'text', nullable: true })
+  whyChoose_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  whyChoose_fr: string;
 
   @Column({
     type: 'enum',

@@ -46,6 +46,10 @@ export class PropertiesService {
     description_fr?: string;
     paymentConditions_en?: string;
     paymentConditions_fr?: string;
+    features_en?: string;
+    features_fr?: string;
+    whyChoose_en?: string;
+    whyChoose_fr?: string;
   }> {
     const translations = {
       title_en: '',
@@ -54,6 +58,10 @@ export class PropertiesService {
       description_fr: '',
       paymentConditions_en: '',
       paymentConditions_fr: '',
+      features_en: '',
+      features_fr: '',
+      whyChoose_en: '',
+      whyChoose_fr: '',
     };
 
     try {
@@ -87,6 +95,26 @@ export class PropertiesService {
         translations.paymentConditions_fr = paymentConditionsFr;
       }
 
+      // Translate features
+      if (propertyData.features) {
+        const [featuresEn, featuresFr] = await Promise.all([
+          this.translationService.translate(propertyData.features, 'en-GB'),
+          this.translationService.translate(propertyData.features, 'fr'),
+        ]);
+        translations.features_en = featuresEn;
+        translations.features_fr = featuresFr;
+      }
+
+      // Translate whyChoose
+      if (propertyData.whyChoose) {
+        const [whyChooseEn, whyChooseFr] = await Promise.all([
+          this.translationService.translate(propertyData.whyChoose, 'en-GB'),
+          this.translationService.translate(propertyData.whyChoose, 'fr'),
+        ]);
+        translations.whyChoose_en = whyChooseEn;
+        translations.whyChoose_fr = whyChooseFr;
+      }
+
       this.logger.log('Property translations completed successfully');
     } catch (error) {
       this.logger.error('Error translating property:', error);
@@ -98,7 +126,7 @@ export class PropertiesService {
 
   /**
    * Transform property to include virtual fields based on requested locale
-   * Returns title/description/paymentConditions as generic fields for backwards compatibility
+   * Returns title/description/paymentConditions/features/whyChoose as generic fields for backwards compatibility
    */
   private transformPropertyForLocale(
     property: Property,
@@ -112,6 +140,16 @@ export class PropertiesService {
       property[`description_${locale}`] || property.description_pt;
     transformed['paymentConditions'] =
       property[`paymentConditions_${locale}`] || property.paymentConditions_pt;
+
+    // Features and whyChoose - PT is stored in 'features' and 'whyChoose' fields directly
+    if (locale === 'pt') {
+      // Already have features and whyChoose as-is
+    } else {
+      transformed['features'] =
+        property[`features_${locale}`] || property.features;
+      transformed['whyChoose'] =
+        property[`whyChoose_${locale}`] || property.whyChoose;
+    }
 
     return transformed;
   }
@@ -607,12 +645,14 @@ export class PropertiesService {
     const { teamMemberId, relatedPropertyIds, ...updateData } =
       updatePropertyDto;
 
-    // Auto-translate to EN/FR if PT fields were updated (TODO: implement translation API)
+    // Auto-translate to EN/FR if PT fields were updated
     let translations = {};
     if (
       updateData.title_pt ||
       updateData.description_pt ||
-      updateData.paymentConditions_pt
+      updateData.paymentConditions_pt ||
+      updateData.features ||
+      updateData.whyChoose
     ) {
       translations = await this.translateProperty(updateData as any);
     }
