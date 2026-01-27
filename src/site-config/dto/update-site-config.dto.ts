@@ -50,6 +50,12 @@ export class UpdateSiteConfigDto {
   eurosEmTransacoes?: number;
 
   @IsOptional()
+  @Transform(({ value }) => value === '' || value === null || value === undefined ? undefined : Number(value))
+  @IsNumber()
+  @Min(0)
+  seguidoresInstagram?: number;
+
+  @IsOptional()
   @IsString()
   apresentadoraImage?: string;
 }
