@@ -58,4 +58,8 @@ export class UpdateSiteConfigDto {
   @IsOptional()
   @IsString()
   apresentadoraImage?: string;
+
+  @IsOptional()
+  @IsString()
+  podcastImagem?: string;
 }

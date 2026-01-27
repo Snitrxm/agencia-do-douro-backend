@@ -41,6 +41,9 @@ export class SiteConfig {
   @Column({ type: 'text', nullable: true })
   apresentadoraImage: string;
 
+  @Column({ type: 'text', nullable: true })
+  podcastImagem: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

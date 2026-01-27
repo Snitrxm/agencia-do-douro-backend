@@ -7,7 +7,7 @@ import {
   UploadedFiles,
   BadRequestException,
 } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { SiteConfigService } from './site-config.service';
 import { UpdateSiteConfigDto } from './dto/update-site-config.dto';
 import { UploadService } from '../upload/upload.service';
@@ -26,28 +26,50 @@ export class SiteConfigController {
 
   @Patch()
   @UseInterceptors(
-    FilesInterceptor('apresentadoraImage', 1, {
-      limits: { fileSize: 5 * 1024 * 1024 },
-      fileFilter: (_req, file, cb) => {
-        const isImage = file.mimetype.match(/^image\/(jpg|jpeg|png|gif|webp)$/);
-        if (!isImage) {
-          return cb(
-            new BadRequestException('Apenas imagens são permitidas'),
-            false,
+    FileFieldsInterceptor(
+      [
+        { name: 'apresentadoraImage', maxCount: 1 },
+        { name: 'podcastImagem', maxCount: 1 },
+      ],
+      {
+        limits: { fileSize: 5 * 1024 * 1024 },
+        fileFilter: (_req, file, cb) => {
+          const isImage = file.mimetype.match(
+            /^image\/(jpg|jpeg|png|gif|webp)$/,
           );
-        }
-        cb(null, true);
+          if (!isImage) {
+            return cb(
+              new BadRequestException('Apenas imagens são permitidas'),
+              false,
+            );
+          }
+          cb(null, true);
+        },
       },
-    }),
+    ),
   )
   async updateConfig(
     @Body() updateSiteConfigDto: UpdateSiteConfigDto,
-    @UploadedFiles() files: Express.Multer.File[],
+    @UploadedFiles()
+    files: {
+      apresentadoraImage?: Express.Multer.File[];
+      podcastImagem?: Express.Multer.File[];
+    },
   ) {
-    if (files && files.length > 0) {
-      const imageUrl = await this.uploadService.uploadImage(files[0]);
+    if (files?.apresentadoraImage && files.apresentadoraImage.length > 0) {
+      const imageUrl = await this.uploadService.uploadImage(
+        files.apresentadoraImage[0],
+      );
       updateSiteConfigDto.apresentadoraImage = imageUrl.url;
     }
+
+    if (files?.podcastImagem && files.podcastImagem.length > 0) {
+      const imageUrl = await this.uploadService.uploadImage(
+        files.podcastImagem[0],
+      );
+      updateSiteConfigDto.podcastImagem = imageUrl.url;
+    }
+
     return this.siteConfigService.updateConfig(updateSiteConfigDto);
   }
 }
