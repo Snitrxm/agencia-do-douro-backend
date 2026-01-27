@@ -19,7 +19,7 @@ export class TeamMembersService {
 
   async findAll(): Promise<TeamMember[]> {
     return this.teamMemberRepository.find({
-      order: { createdAt: 'ASC' },
+      order: { displayOrder: 'ASC', createdAt: 'ASC' },
     });
   }
 

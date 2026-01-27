@@ -25,6 +25,12 @@ export class TeamMember {
   @Column({ type: 'text', nullable: true })
   photo: string;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  role: string;
+
+  @Column({ type: 'int', default: 0 })
+  displayOrder: number;
+
   @OneToMany(() => Property, (property) => property.teamMember)
   properties: Property[];
 

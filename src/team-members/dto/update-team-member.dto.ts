@@ -1,4 +1,5 @@
-import { IsEmail, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsEmail, IsInt, IsOptional, IsString, MaxLength, Min } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class UpdateTeamMemberDto {
   @IsOptional()
@@ -19,4 +20,15 @@ export class UpdateTeamMemberDto {
   @IsOptional()
   @IsString()
   photo?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  role?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value, 10))
+  @IsInt()
+  @Min(0)
+  displayOrder?: number;
 }
