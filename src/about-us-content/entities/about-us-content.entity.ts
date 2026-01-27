@@ -106,6 +106,44 @@ export class AboutUsContent {
   @Column({ type: 'text', nullable: true })
   teamDescription_fr: string;
 
+  // Nova Seção - Television
+  @Column({ type: 'varchar', length: 100 })
+  televisionLabel_pt: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  televisionLabel_en: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  televisionLabel_fr: string;
+
+  @Column({ type: 'varchar', length: 100 })
+  televisionTitle_pt: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  televisionTitle_en: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  televisionTitle_fr: string;
+
+  @Column({ type: 'text' })
+  televisionDescription_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  televisionDescription_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  televisionDescription_fr: string;
+
+  // Links do YouTube
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  youtubeLink1: string;
+
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  youtubeLink2: string;
+
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  youtubeLink3: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

@@ -34,6 +34,9 @@ export class AboutUsContentService {
         teamLabel_pt: 'Conheça a Nossa Equipa',
         teamTitle_pt: 'A Nossa Equipa',
         teamDescription_pt: 'A nossa equipa é composta por profissionais altamente qualificados e experientes, dedicados a proporcionar o melhor serviço e a transformar os seus sonhos em realidade.',
+        televisionLabel_pt: 'Na Televisão',
+        televisionTitle_pt: 'Veja-nos na Televisão',
+        televisionDescription_pt: 'Confira as nossas aparições e entrevistas em programas de televisão.',
       });
       content = await this.aboutUsContentRepository.save(content);
 
@@ -61,7 +64,8 @@ export class AboutUsContentService {
     const fieldsToTranslate = [
       'pageTitle', 'pageSubtitle', 'description1', 'description2',
       'cultureLabel', 'cultureTitle', 'servicesLabel', 'servicesTitle',
-      'teamLabel', 'teamTitle', 'teamDescription'
+      'teamLabel', 'teamTitle', 'teamDescription',
+      'televisionLabel', 'televisionTitle', 'televisionDescription'
     ];
 
     for (const field of fieldsToTranslate) {
@@ -94,12 +98,18 @@ export class AboutUsContentService {
     const fields = [
       'pageTitle', 'pageSubtitle', 'description1', 'description2',
       'cultureLabel', 'cultureTitle', 'servicesLabel', 'servicesTitle',
-      'teamLabel', 'teamTitle', 'teamDescription'
+      'teamLabel', 'teamTitle', 'teamDescription',
+      'televisionLabel', 'televisionTitle', 'televisionDescription'
     ];
 
     fields.forEach(field => {
       transformed[field] = content[`${field}_${locale}`] || content[`${field}_pt`];
     });
+
+    // Adicionar links do YouTube (não dependem de locale)
+    transformed.youtubeLink1 = content.youtubeLink1;
+    transformed.youtubeLink2 = content.youtubeLink2;
+    transformed.youtubeLink3 = content.youtubeLink3;
 
     transformed.id = content.id;
     transformed.createdAt = content.createdAt;

@@ -56,4 +56,43 @@ export class UpdateAboutUsContentDto {
   @IsOptional()
   @IsString()
   teamDescription_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  valuesLabel_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  valuesTitle_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  televisionDescription_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  televisionLabel_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  televisionTitle_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  youtubeLink1?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  youtubeLink2?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  youtubeLink3?: string;
 }
