@@ -4,6 +4,8 @@ import { Repository, In } from 'typeorm';
 import { Property } from './entities/property.entity';
 import { PropertyImageSection } from './entities/property-image-section.entity';
 import { PropertyFile } from './entities/property-file.entity';
+import { PropertyFraction } from './entities/property-fraction.entity';
+import { PropertyFractionColumn } from './entities/property-fraction-column.entity';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { FilterPropertyDto } from './dto/filter-property.dto';
@@ -19,6 +21,15 @@ import {
 } from './dto/manage-related-properties.dto';
 import { CreatePropertyFileDto } from './dto/create-property-file.dto';
 import { UpdatePropertyFileDto } from './dto/update-property-file.dto';
+import {
+  CreatePropertyFractionDto,
+  UpdatePropertyFractionDto,
+  BulkCreateFractionsDto,
+} from './dto/property-fraction.dto';
+import {
+  CreatePropertyFractionColumnDto,
+  UpdatePropertyFractionColumnDto,
+} from './dto/property-fraction-column.dto';
 import { TranslationService } from '../translation/translation.service';
 
 @Injectable()
@@ -32,6 +43,10 @@ export class PropertiesService {
     private imageSectionRepository: Repository<PropertyImageSection>,
     @InjectRepository(PropertyFile)
     private propertyFileRepository: Repository<PropertyFile>,
+    @InjectRepository(PropertyFraction)
+    private fractionRepository: Repository<PropertyFraction>,
+    @InjectRepository(PropertyFractionColumn)
+    private fractionColumnRepository: Repository<PropertyFractionColumn>,
     private uploadService: UploadService,
     private translationService: TranslationService,
   ) {}
@@ -1179,5 +1194,162 @@ export class PropertiesService {
     });
 
     return Promise.all(uploadPromises);
+  }
+
+  // ==========================================
+  // Métodos para gerenciar frações de propriedades
+  // ==========================================
+
+  /**
+   * Busca todas as frações de uma propriedade
+   */
+  async getFractions(propertyId: string): Promise<PropertyFraction[]> {
+    return this.fractionRepository.find({
+      where: { propertyId },
+      order: { displayOrder: 'ASC' },
+    });
+  }
+
+  /**
+   * Busca uma fração por ID
+   */
+  async getFractionById(fractionId: string): Promise<PropertyFraction | null> {
+    return this.fractionRepository.findOne({ where: { id: fractionId } });
+  }
+
+  /**
+   * Cria uma nova fração
+   */
+  async createFraction(
+    propertyId: string,
+    createFractionDto: CreatePropertyFractionDto,
+  ): Promise<PropertyFraction | null> {
+    const property = await this.findOne(propertyId);
+    if (!property) return null;
+
+    const fraction = this.fractionRepository.create({
+      propertyId,
+      ...createFractionDto,
+    });
+
+    return this.fractionRepository.save(fraction);
+  }
+
+  /**
+   * Atualiza uma fração existente
+   */
+  async updateFraction(
+    fractionId: string,
+    updateFractionDto: UpdatePropertyFractionDto,
+  ): Promise<PropertyFraction | null> {
+    const fraction = await this.getFractionById(fractionId);
+    if (!fraction) return null;
+
+    Object.assign(fraction, updateFractionDto);
+    return this.fractionRepository.save(fraction);
+  }
+
+  /**
+   * Deleta uma fração
+   */
+  async deleteFraction(fractionId: string): Promise<PropertyFraction | null> {
+    const fraction = await this.getFractionById(fractionId);
+    if (!fraction) return null;
+
+    await this.fractionRepository.remove(fraction);
+    return fraction;
+  }
+
+  /**
+   * Cria múltiplas frações de uma vez
+   */
+  async bulkCreateFractions(
+    propertyId: string,
+    bulkCreateDto: BulkCreateFractionsDto,
+  ): Promise<PropertyFraction[]> {
+    const property = await this.findOne(propertyId);
+    if (!property) {
+      throw new Error(`Propriedade com ID ${propertyId} não encontrada`);
+    }
+
+    const fractions = bulkCreateDto.fractions.map((fractionDto, index) =>
+      this.fractionRepository.create({
+        propertyId,
+        ...fractionDto,
+        displayOrder: fractionDto.displayOrder ?? index,
+      }),
+    );
+
+    return this.fractionRepository.save(fractions);
+  }
+
+  // ==========================================
+  // Métodos para gerenciar colunas de frações
+  // ==========================================
+
+  /**
+   * Busca todas as colunas de frações de uma propriedade
+   */
+  async getFractionColumns(
+    propertyId: string,
+  ): Promise<PropertyFractionColumn[]> {
+    return this.fractionColumnRepository.find({
+      where: { propertyId },
+      order: { displayOrder: 'ASC' },
+    });
+  }
+
+  /**
+   * Busca uma coluna por ID
+   */
+  async getFractionColumnById(
+    columnId: string,
+  ): Promise<PropertyFractionColumn | null> {
+    return this.fractionColumnRepository.findOne({ where: { id: columnId } });
+  }
+
+  /**
+   * Cria uma nova coluna de fração
+   */
+  async createFractionColumn(
+    propertyId: string,
+    createColumnDto: CreatePropertyFractionColumnDto,
+  ): Promise<PropertyFractionColumn | null> {
+    const property = await this.findOne(propertyId);
+    if (!property) return null;
+
+    const column = this.fractionColumnRepository.create({
+      propertyId,
+      ...createColumnDto,
+    });
+
+    return this.fractionColumnRepository.save(column);
+  }
+
+  /**
+   * Atualiza uma coluna existente
+   */
+  async updateFractionColumn(
+    columnId: string,
+    updateColumnDto: UpdatePropertyFractionColumnDto,
+  ): Promise<PropertyFractionColumn | null> {
+    const column = await this.getFractionColumnById(columnId);
+    if (!column) return null;
+
+    Object.assign(column, updateColumnDto);
+    return this.fractionColumnRepository.save(column);
+  }
+
+  /**
+   * Deleta uma coluna
+   */
+  async deleteFractionColumn(
+    columnId: string,
+  ): Promise<PropertyFractionColumn | null> {
+    const column = await this.getFractionColumnById(columnId);
+    if (!column) return null;
+
+    await this.fractionColumnRepository.remove(column);
+    return column;
   }
 }

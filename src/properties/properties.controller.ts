@@ -29,6 +29,15 @@ import {
 } from './dto/manage-related-properties.dto';
 import { CreatePropertyFileDto } from './dto/create-property-file.dto';
 import { UpdatePropertyFileDto } from './dto/update-property-file.dto';
+import {
+  CreatePropertyFractionDto,
+  UpdatePropertyFractionDto,
+  BulkCreateFractionsDto,
+} from './dto/property-fraction.dto';
+import {
+  CreatePropertyFractionColumnDto,
+  UpdatePropertyFractionColumnDto,
+} from './dto/property-fraction-column.dto';
 import { UploadService } from '../upload/upload.service';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -494,6 +503,188 @@ export class PropertiesController {
     return {
       message: 'Arquivo deletado com sucesso',
       file,
+    };
+  }
+
+  // ==========================================
+  // Endpoints para gerenciar frações de propriedades
+  // ==========================================
+
+  /**
+   * GET /properties/:id/fractions
+   * Lista todas as frações de uma propriedade
+   */
+  @Get(':id/fractions')
+  async getFractions(@Param('id') propertyId: string) {
+    return this.propertiesService.getFractions(propertyId);
+  }
+
+  /**
+   * POST /properties/:id/fractions
+   * Cria uma nova fração
+   */
+  @Post(':id/fractions')
+  async createFraction(
+    @Param('id') propertyId: string,
+    @Body() createFractionDto: CreatePropertyFractionDto,
+  ) {
+    const fraction = await this.propertiesService.createFraction(
+      propertyId,
+      createFractionDto,
+    );
+
+    if (!fraction) {
+      throw new NotFoundException(
+        `Propriedade com ID ${propertyId} não encontrada`,
+      );
+    }
+
+    return fraction;
+  }
+
+  /**
+   * POST /properties/:id/fractions/bulk
+   * Cria múltiplas frações de uma vez
+   */
+  @Post(':id/fractions/bulk')
+  async bulkCreateFractions(
+    @Param('id') propertyId: string,
+    @Body() bulkCreateDto: BulkCreateFractionsDto,
+  ) {
+    try {
+      const fractions = await this.propertiesService.bulkCreateFractions(
+        propertyId,
+        bulkCreateDto,
+      );
+
+      return {
+        message: `${fractions.length} fração(ões) criada(s) com sucesso`,
+        fractions,
+      };
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
+  }
+
+  /**
+   * PATCH /properties/fractions/:fractionId
+   * Atualiza uma fração
+   */
+  @Patch('fractions/:fractionId')
+  async updateFraction(
+    @Param('fractionId') fractionId: string,
+    @Body() updateFractionDto: UpdatePropertyFractionDto,
+  ) {
+    const fraction = await this.propertiesService.updateFraction(
+      fractionId,
+      updateFractionDto,
+    );
+
+    if (!fraction) {
+      throw new NotFoundException(
+        `Fração com ID ${fractionId} não encontrada`,
+      );
+    }
+
+    return fraction;
+  }
+
+  /**
+   * DELETE /properties/fractions/:fractionId
+   * Deleta uma fração
+   */
+  @Delete('fractions/:fractionId')
+  async deleteFraction(@Param('fractionId') fractionId: string) {
+    const fraction = await this.propertiesService.deleteFraction(fractionId);
+
+    if (!fraction) {
+      throw new NotFoundException(
+        `Fração com ID ${fractionId} não encontrada`,
+      );
+    }
+
+    return {
+      message: 'Fração deletada com sucesso',
+      fraction,
+    };
+  }
+
+  // ==========================================
+  // Endpoints para gerenciar colunas de frações
+  // ==========================================
+
+  /**
+   * GET /properties/:id/fraction-columns
+   * Lista todas as colunas de frações de uma propriedade
+   */
+  @Get(':id/fraction-columns')
+  async getFractionColumns(@Param('id') propertyId: string) {
+    return this.propertiesService.getFractionColumns(propertyId);
+  }
+
+  /**
+   * POST /properties/:id/fraction-columns
+   * Cria uma nova coluna de fração
+   */
+  @Post(':id/fraction-columns')
+  async createFractionColumn(
+    @Param('id') propertyId: string,
+    @Body() createColumnDto: CreatePropertyFractionColumnDto,
+  ) {
+    const column = await this.propertiesService.createFractionColumn(
+      propertyId,
+      createColumnDto,
+    );
+
+    if (!column) {
+      throw new NotFoundException(
+        `Propriedade com ID ${propertyId} não encontrada`,
+      );
+    }
+
+    return column;
+  }
+
+  /**
+   * PATCH /properties/fraction-columns/:columnId
+   * Atualiza uma coluna de fração
+   */
+  @Patch('fraction-columns/:columnId')
+  async updateFractionColumn(
+    @Param('columnId') columnId: string,
+    @Body() updateColumnDto: UpdatePropertyFractionColumnDto,
+  ) {
+    const column = await this.propertiesService.updateFractionColumn(
+      columnId,
+      updateColumnDto,
+    );
+
+    if (!column) {
+      throw new NotFoundException(
+        `Coluna com ID ${columnId} não encontrada`,
+      );
+    }
+
+    return column;
+  }
+
+  /**
+   * DELETE /properties/fraction-columns/:columnId
+   * Deleta uma coluna de fração
+   */
+  @Delete('fraction-columns/:columnId')
+  async deleteFractionColumn(@Param('columnId') columnId: string) {
+    const column = await this.propertiesService.deleteFractionColumn(columnId);
+
+    if (!column) {
+      throw new NotFoundException(
+        `Coluna com ID ${columnId} não encontrada`,
+      );
+    }
+
+    return {
+      message: 'Coluna deletada com sucesso',
+      column,
     };
   }
 }
