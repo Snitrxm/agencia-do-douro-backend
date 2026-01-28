@@ -82,4 +82,44 @@ export class UploadController {
       count: urls.length,
     };
   }
+
+  /**
+   * POST /upload/file
+   * Upload de ficheiro genérico (ex.: PDF para planta de fração)
+   */
+  @Post('file')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
+      fileFilter: (_req, file, cb) => {
+        const allowed =
+          file.mimetype === 'application/pdf' ||
+          file.mimetype.startsWith('image/');
+        if (!allowed) {
+          return cb(
+            new BadRequestException(
+              'Apenas PDF e imagens são permitidos',
+            ),
+            false,
+          );
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('propertyId') propertyId?: string,
+  ) {
+    if (!file) {
+      throw new BadRequestException('Nenhum arquivo foi enviado');
+    }
+
+    const result = await this.uploadService.uploadFile(file, { propertyId });
+    return {
+      url: result.filePath,
+      filename: result.filename,
+      originalName: result.originalName,
+    };
+  }
 }
