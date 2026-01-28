@@ -1310,6 +1310,7 @@ export class PropertiesService {
 
   /**
    * Cria uma nova coluna de fração
+   * Se apenas label_pt for enviado, traduz automaticamente para EN e FR (DeepL)
    */
   async createFractionColumn(
     propertyId: string,
@@ -1323,11 +1324,18 @@ export class PropertiesService {
       ...createColumnDto,
     });
 
-    return this.fractionColumnRepository.save(column);
+    const saved = await this.fractionColumnRepository.save(column);
+
+    if (saved.label_pt && !saved.label_en && !saved.label_fr) {
+      await this.translateFractionColumnLabels(saved);
+    }
+
+    return this.getFractionColumnById(saved.id);
   }
 
   /**
    * Atualiza uma coluna existente
+   * Se label_pt for atualizado e EN/FR não forem enviados, re-traduz automaticamente
    */
   async updateFractionColumn(
     columnId: string,
@@ -1336,8 +1344,50 @@ export class PropertiesService {
     const column = await this.getFractionColumnById(columnId);
     if (!column) return null;
 
+    const labelPtUpdated =
+      updateColumnDto.label_pt !== undefined &&
+      updateColumnDto.label_pt !== column.label_pt;
+    const noEnFr =
+      updateColumnDto.label_en === undefined &&
+      updateColumnDto.label_fr === undefined;
+
     Object.assign(column, updateColumnDto);
-    return this.fractionColumnRepository.save(column);
+    const saved = await this.fractionColumnRepository.save(column);
+
+    if (
+      saved.label_pt &&
+      (labelPtUpdated || (!saved.label_en && !saved.label_fr)) &&
+      noEnFr
+    ) {
+      await this.translateFractionColumnLabels(saved);
+    }
+
+    return this.getFractionColumnById(columnId);
+  }
+
+  /**
+   * Traduz label_pt da coluna de fração para EN e FR (DeepL)
+   */
+  private async translateFractionColumnLabels(
+    column: PropertyFractionColumn,
+  ): Promise<void> {
+    try {
+      const [labelEn, labelFr] = await Promise.all([
+        this.translationService.translate(column.label_pt, 'en-GB'),
+        this.translationService.translate(column.label_pt, 'fr'),
+      ]);
+
+      if (labelEn || labelFr) {
+        column.label_en = labelEn || column.label_en;
+        column.label_fr = labelFr || column.label_fr;
+        await this.fractionColumnRepository.save(column);
+      }
+    } catch (error) {
+      this.logger.warn(
+        `Erro ao traduzir labels da coluna de fração ${column.id}:`,
+        (error as Error)?.message,
+      );
+    }
   }
 
   /**
