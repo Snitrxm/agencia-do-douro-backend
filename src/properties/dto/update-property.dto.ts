@@ -151,6 +151,11 @@ export class UpdatePropertyDto {
   })
   deliveryDate?: string;
 
+  @IsString({ message: 'O piso deve ser uma string' })
+  @IsOptional()
+  @MaxLength(50, { message: 'O piso deve ter no máximo 50 caracteres' })
+  floor?: string;
+
   @IsString({ message: 'O distrito deve ser uma string' })
   @IsOptional()
   @MaxLength(100, { message: 'O distrito deve ter no máximo 100 caracteres' })

@@ -104,6 +104,9 @@ export class Property {
   @Column({ type: 'varchar', length: 255, nullable: true })
   deliveryDate: string;
 
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  floor: string;
+
   // Country code - ISO 3166-1 alpha-2 (PT, ES, FR, etc.)
   @Column({ type: 'varchar', length: 2, default: 'PT' })
   country: string;

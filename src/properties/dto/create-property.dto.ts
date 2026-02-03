@@ -145,6 +145,11 @@ export class CreatePropertyDto {
   })
   deliveryDate?: string;
 
+  @IsString({ message: 'O piso deve ser uma string' })
+  @IsOptional()
+  @MaxLength(50, { message: 'O piso deve ter no máximo 50 caracteres' })
+  floor?: string;
+
   @IsString({ message: 'O código do país deve ser uma string' })
   @IsOptional()
   @MaxLength(2, { message: 'O código do país deve ter 2 caracteres (ISO)' })
