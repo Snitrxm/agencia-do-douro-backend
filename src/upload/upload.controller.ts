@@ -122,4 +122,39 @@ export class UploadController {
       originalName: result.originalName,
     };
   }
+
+  /**
+   * POST /upload/video
+   * Upload de vídeo (mp4, webm, mov, avi)
+   */
+  @Post('video')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: { fileSize: 500 * 1024 * 1024 }, // 500MB
+      fileFilter: (_req, file, cb) => {
+        if (!file.mimetype.match(/\/(mp4|webm|quicktime|x-msvideo|avi|mov)$/)) {
+          return cb(
+            new BadRequestException(
+              'Apenas vídeos são permitidos (mp4, webm, mov, avi)',
+            ),
+            false,
+          );
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  async uploadVideo(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('Nenhum arquivo foi enviado');
+    }
+
+    const result = await this.uploadService.uploadVideo(file);
+    return {
+      url: result.url,
+      filename: result.filename,
+      originalName: result.originalName,
+      size: result.size,
+    };
+  }
 }

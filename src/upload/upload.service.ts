@@ -297,4 +297,46 @@ export class UploadService {
     const results = await Promise.all(uploadPromises);
     return results.map((result) => result.url);
   }
+
+  /**
+   * Upload de vídeo
+   * Salva o vídeo diretamente no diretório de uploads/videos
+   */
+  async uploadVideo(
+    file: Express.Multer.File,
+  ): Promise<{ url: string; filename: string; originalName: string; size: number }> {
+    const videoDir = 'uploads/videos';
+
+    // Garantir que o diretório existe
+    try {
+      await fs.access(videoDir);
+    } catch {
+      await fs.mkdir(videoDir, { recursive: true });
+      this.logger.log(`Created videos directory: ${videoDir}`);
+    }
+
+    const fileExt = path.extname(file.originalname) || '.mp4';
+    const filename = `${uuidv4()}${fileExt}`;
+    const filepath = path.join(videoDir, filename);
+
+    try {
+      await fs.writeFile(filepath, file.buffer);
+      const url = `${this.baseUrl}/uploads/videos/${filename}`;
+
+      this.logger.log(`Vídeo enviado com sucesso: ${filename}`);
+
+      return {
+        url,
+        filename,
+        originalName: file.originalname,
+        size: file.size,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Falha ao fazer upload do vídeo: ${error.message}`,
+        error.stack,
+      );
+      throw new Error('Falha ao fazer upload do vídeo');
+    }
+  }
 }
