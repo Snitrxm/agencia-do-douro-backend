@@ -6,13 +6,21 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+export type MediaType = 'image' | 'video';
+
 @Entity('podcast_gallery_images')
 export class PodcastGalleryImage {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'enum', enum: ['image', 'video'], default: 'image' })
+  mediaType: MediaType;
+
   @Column({ type: 'varchar', length: 500 })
   imageUrl: string;
+
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  videoUrl: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   alt_pt: string;

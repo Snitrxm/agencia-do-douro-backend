@@ -99,7 +99,9 @@ export class PodcastGalleryService {
 
     return images.map((image) => ({
       id: image.id,
+      mediaType: image.mediaType || 'image',
       imageUrl: image.imageUrl,
+      videoUrl: image.videoUrl,
       alt: image[`alt_${locale}`] || image.alt_pt || '',
       order: image.order,
       createdAt: image.createdAt,

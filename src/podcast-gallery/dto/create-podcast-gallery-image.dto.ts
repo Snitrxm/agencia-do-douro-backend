@@ -4,16 +4,29 @@ import {
   IsOptional,
   IsInt,
   IsBoolean,
+  IsIn,
   Min,
   MaxLength,
+  ValidateIf,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreatePodcastGalleryImageDto {
+  @IsOptional()
+  @IsIn(['image', 'video'], { message: 'O tipo de mídia deve ser "image" ou "video"' })
+  mediaType?: 'image' | 'video';
+
+  @ValidateIf((o) => o.mediaType !== 'video')
   @IsString({ message: 'A URL da imagem deve ser uma string' })
   @IsNotEmpty({ message: 'A URL da imagem é obrigatória' })
   @MaxLength(500, { message: 'A URL deve ter no máximo 500 caracteres' })
-  imageUrl: string;
+  imageUrl?: string;
+
+  @ValidateIf((o) => o.mediaType === 'video')
+  @IsString({ message: 'A URL do vídeo deve ser uma string' })
+  @IsNotEmpty({ message: 'A URL do vídeo é obrigatória para mídia do tipo video' })
+  @MaxLength(500, { message: 'A URL do vídeo deve ter no máximo 500 caracteres' })
+  videoUrl?: string;
 
   @IsOptional()
   @IsString({ message: 'O alt em português deve ser uma string' })
