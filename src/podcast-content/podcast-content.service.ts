@@ -73,11 +73,19 @@ export class PodcastContentService {
   private async translateContent(content: PodcastContent): Promise<void> {
     const fieldsToTranslate = [
       'headerLabel', 'pageTitle', 'pageSubtitle', 'pageDescription',
+      'aboutLabel', 'aboutTitle', 'aboutIntro', 'aboutOrigin', 'aboutIntention', 'aboutPresentation',
       'topicsLabel', 'topicsTitle',
       'episodesLabel', 'episodesTitle', 'episodesDescription',
       'episode1Title', 'episode2Title', 'episode3Title',
       'episode4Title', 'episode5Title', 'episode6Title',
-      'hostLabel', 'hostDescription'
+      'hostLabel', 'hostDescription',
+      'hostCredential', 'hostParagraph1', 'hostParagraph2', 'hostParagraph3', 'hostQuote', 'hostLinkedInLabel',
+      'guestsLabel', 'guestsTitle',
+      'galleryLabel', 'galleryTitle', 'galleryDescription',
+      'whyListenLabel', 'whyListenTitle', 'whyListenSubtitle',
+      'testimonialsLabel', 'testimonialsTitle', 'testimonialsSubtitle',
+      'ctaLabel', 'ctaTitle', 'ctaDescription', 'ctaHint', 'ctaButtonLabel',
+      'platformsLabel', 'platformsTitle', 'platformsDescription'
     ];
 
     for (const field of fieldsToTranslate) {
@@ -109,11 +117,19 @@ export class PodcastContentService {
 
     const textFields = [
       'headerLabel', 'pageTitle', 'pageSubtitle', 'pageDescription',
+      'aboutLabel', 'aboutTitle', 'aboutIntro', 'aboutOrigin', 'aboutIntention', 'aboutPresentation',
       'topicsLabel', 'topicsTitle',
       'episodesLabel', 'episodesTitle', 'episodesDescription',
       'episode1Title', 'episode2Title', 'episode3Title',
       'episode4Title', 'episode5Title', 'episode6Title',
-      'hostLabel', 'hostDescription'
+      'hostLabel', 'hostDescription',
+      'hostCredential', 'hostParagraph1', 'hostParagraph2', 'hostParagraph3', 'hostQuote', 'hostLinkedInLabel',
+      'guestsLabel', 'guestsTitle',
+      'galleryLabel', 'galleryTitle', 'galleryDescription',
+      'whyListenLabel', 'whyListenTitle', 'whyListenSubtitle',
+      'testimonialsLabel', 'testimonialsTitle', 'testimonialsSubtitle',
+      'ctaLabel', 'ctaTitle', 'ctaDescription', 'ctaHint', 'ctaButtonLabel',
+      'platformsLabel', 'platformsTitle', 'platformsDescription'
     ];
 
     textFields.forEach(field => {
@@ -128,6 +144,7 @@ export class PodcastContentService {
     transformed.episode5Url = content.episode5Url;
     transformed.episode6Url = content.episode6Url;
     transformed.hostName = content.hostName;
+    transformed.hostLinkedInUrl = content.hostLinkedInUrl;
 
     transformed.id = content.id;
     transformed.createdAt = content.createdAt;

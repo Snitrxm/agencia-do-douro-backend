@@ -10,6 +10,10 @@ import { TeamMembersModule } from './team-members/team-members.module';
 import { DesiredZonesModule } from './desired-zones/desired-zones.module';
 import { PodcastTopicsModule } from './podcast-topics/podcast-topics.module';
 import { PodcastContentModule } from './podcast-content/podcast-content.module';
+import { PodcastGuestsModule } from './podcast-guests/podcast-guests.module';
+import { PodcastTestimonialsModule } from './podcast-testimonials/podcast-testimonials.module';
+import { PodcastGalleryModule } from './podcast-gallery/podcast-gallery.module';
+import { PodcastWhyListenModule } from './podcast-why-listen/podcast-why-listen.module';
 import { AboutUsContentModule } from './about-us-content/about-us-content.module';
 import { SellPropertyContentModule } from './sell-property-content/sell-property-content.module';
 import { CultureItemsModule } from './culture-items/culture-items.module';
@@ -41,6 +45,10 @@ import { DepoimentosModule } from './depoimentos/depoimentos.module';
     DesiredZonesModule,
     PodcastTopicsModule,
     PodcastContentModule,
+    PodcastGuestsModule,
+    PodcastTestimonialsModule,
+    PodcastGalleryModule,
+    PodcastWhyListenModule,
     AboutUsContentModule,
     SellPropertyContentModule,
     CultureItemsModule,

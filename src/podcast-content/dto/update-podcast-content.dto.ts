@@ -24,6 +24,33 @@ export class UpdatePodcastContentDto {
   @MinLength(10)
   pageDescription_pt?: string;
 
+  // Seção About
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  aboutLabel_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  aboutTitle_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  aboutIntro_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  aboutOrigin_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  aboutIntention_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  aboutPresentation_pt?: string;
+
   // Seção Tópicos
   @IsOptional()
   @IsString()
@@ -125,4 +152,132 @@ export class UpdatePodcastContentDto {
   @IsOptional()
   @IsString()
   hostDescription_pt?: string;
+
+  // Seção Apresentadora - Campos expandidos
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  hostCredential_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  hostParagraph1_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  hostParagraph2_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  hostParagraph3_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  hostQuote_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  hostLinkedInUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  hostLinkedInLabel_pt?: string;
+
+  // Seção Guests Header
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  guestsLabel_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  guestsTitle_pt?: string;
+
+  // Seção Gallery Header
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  galleryLabel_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  galleryTitle_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  galleryDescription_pt?: string;
+
+  // Seção WhyListen Header
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  whyListenLabel_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  whyListenTitle_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  whyListenSubtitle_pt?: string;
+
+  // Seção Testimonials Header
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  testimonialsLabel_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  testimonialsTitle_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  testimonialsSubtitle_pt?: string;
+
+  // Seção CTA Final
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  ctaLabel_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  ctaTitle_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  ctaDescription_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  ctaHint_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  ctaButtonLabel_pt?: string;
+
+  // Seção Platforms Header
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  platformsLabel_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  platformsTitle_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  platformsDescription_pt?: string;
 }

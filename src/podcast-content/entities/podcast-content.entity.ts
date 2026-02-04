@@ -42,6 +42,61 @@ export class PodcastContent {
   @Column({ type: 'text', nullable: true })
   pageDescription_fr: string;
 
+  // Seção About
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  aboutLabel_pt: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  aboutLabel_en: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  aboutLabel_fr: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  aboutTitle_pt: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  aboutTitle_en: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  aboutTitle_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  aboutIntro_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  aboutIntro_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  aboutIntro_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  aboutOrigin_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  aboutOrigin_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  aboutOrigin_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  aboutIntention_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  aboutIntention_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  aboutIntention_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  aboutPresentation_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  aboutPresentation_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  aboutPresentation_fr: string;
+
   // Seção "O Que Abordamos"
   @Column({ type: 'varchar', length: 100 })
   topicsLabel_pt: string;
@@ -183,6 +238,241 @@ export class PodcastContent {
 
   @Column({ type: 'text', nullable: true })
   hostDescription_fr: string;
+
+  // Seção Apresentadora - Campos expandidos
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  hostCredential_pt: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  hostCredential_en: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  hostCredential_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  hostParagraph1_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  hostParagraph1_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  hostParagraph1_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  hostParagraph2_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  hostParagraph2_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  hostParagraph2_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  hostParagraph3_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  hostParagraph3_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  hostParagraph3_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  hostQuote_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  hostQuote_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  hostQuote_fr: string;
+
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  hostLinkedInUrl: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  hostLinkedInLabel_pt: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  hostLinkedInLabel_en: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  hostLinkedInLabel_fr: string;
+
+  // Seção Guests Header
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  guestsLabel_pt: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  guestsLabel_en: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  guestsLabel_fr: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  guestsTitle_pt: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  guestsTitle_en: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  guestsTitle_fr: string;
+
+  // Seção Gallery Header
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  galleryLabel_pt: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  galleryLabel_en: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  galleryLabel_fr: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  galleryTitle_pt: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  galleryTitle_en: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  galleryTitle_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  galleryDescription_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  galleryDescription_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  galleryDescription_fr: string;
+
+  // Seção WhyListen Header
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  whyListenLabel_pt: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  whyListenLabel_en: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  whyListenLabel_fr: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  whyListenTitle_pt: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  whyListenTitle_en: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  whyListenTitle_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  whyListenSubtitle_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  whyListenSubtitle_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  whyListenSubtitle_fr: string;
+
+  // Seção Testimonials Header
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  testimonialsLabel_pt: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  testimonialsLabel_en: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  testimonialsLabel_fr: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  testimonialsTitle_pt: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  testimonialsTitle_en: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  testimonialsTitle_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  testimonialsSubtitle_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  testimonialsSubtitle_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  testimonialsSubtitle_fr: string;
+
+  // Seção CTA Final
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  ctaLabel_pt: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  ctaLabel_en: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  ctaLabel_fr: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  ctaTitle_pt: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  ctaTitle_en: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  ctaTitle_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  ctaDescription_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  ctaDescription_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  ctaDescription_fr: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  ctaHint_pt: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  ctaHint_en: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  ctaHint_fr: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  ctaButtonLabel_pt: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  ctaButtonLabel_en: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  ctaButtonLabel_fr: string;
+
+  // Seção Platforms Header
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  platformsLabel_pt: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  platformsLabel_en: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  platformsLabel_fr: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  platformsTitle_pt: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  platformsTitle_en: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  platformsTitle_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  platformsDescription_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  platformsDescription_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  platformsDescription_fr: string;
 
   @CreateDateColumn()
   createdAt: Date;
