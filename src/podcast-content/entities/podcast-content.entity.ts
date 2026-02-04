@@ -15,22 +15,22 @@ export class PodcastContent {
   @Column({ type: 'varchar', length: 100, nullable: true })
   headerLabel_fr: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'text' })
   pageTitle_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   pageTitle_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   pageTitle_fr: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'text' })
   pageSubtitle_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   pageSubtitle_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   pageSubtitle_fr: string;
 
   @Column({ type: 'text' })
@@ -52,13 +52,13 @@ export class PodcastContent {
   @Column({ type: 'varchar', length: 100, nullable: true })
   aboutLabel_fr: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   aboutTitle_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   aboutTitle_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   aboutTitle_fr: string;
 
   @Column({ type: 'text', nullable: true })
@@ -145,76 +145,76 @@ export class PodcastContent {
   episodesDescription_fr: string;
 
   // Episódios do YouTube (até 6 episódios)
-  @Column({ type: 'varchar', length: 500, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode1Url: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode1Title_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode1Title_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode1Title_fr: string;
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode2Url: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode2Title_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode2Title_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode2Title_fr: string;
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode3Url: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode3Title_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode3Title_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode3Title_fr: string;
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode4Url: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode4Title_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode4Title_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode4Title_fr: string;
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode5Url: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode5Title_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode5Title_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode5Title_fr: string;
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode6Url: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode6Title_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode6Title_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   episode6Title_fr: string;
 
   // Seção Apresentadora
@@ -227,7 +227,7 @@ export class PodcastContent {
   @Column({ type: 'varchar', length: 100, nullable: true })
   hostLabel_fr: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'text' })
   hostName: string;
 
   @Column({ type: 'text' })
@@ -240,13 +240,13 @@ export class PodcastContent {
   hostDescription_fr: string;
 
   // Seção Apresentadora - Campos expandidos
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   hostCredential_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   hostCredential_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   hostCredential_fr: string;
 
   @Column({ type: 'text', nullable: true })
@@ -285,7 +285,7 @@ export class PodcastContent {
   @Column({ type: 'text', nullable: true })
   hostQuote_fr: string;
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
+  @Column({ type: 'text', nullable: true })
   hostLinkedInUrl: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
@@ -307,13 +307,13 @@ export class PodcastContent {
   @Column({ type: 'varchar', length: 100, nullable: true })
   guestsLabel_fr: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   guestsTitle_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   guestsTitle_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   guestsTitle_fr: string;
 
   // Seção Gallery Header
@@ -326,13 +326,13 @@ export class PodcastContent {
   @Column({ type: 'varchar', length: 100, nullable: true })
   galleryLabel_fr: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   galleryTitle_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   galleryTitle_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   galleryTitle_fr: string;
 
   @Column({ type: 'text', nullable: true })
@@ -354,13 +354,13 @@ export class PodcastContent {
   @Column({ type: 'varchar', length: 100, nullable: true })
   whyListenLabel_fr: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   whyListenTitle_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   whyListenTitle_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   whyListenTitle_fr: string;
 
   @Column({ type: 'text', nullable: true })
@@ -382,13 +382,13 @@ export class PodcastContent {
   @Column({ type: 'varchar', length: 100, nullable: true })
   testimonialsLabel_fr: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   testimonialsTitle_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   testimonialsTitle_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   testimonialsTitle_fr: string;
 
   @Column({ type: 'text', nullable: true })
@@ -410,13 +410,13 @@ export class PodcastContent {
   @Column({ type: 'varchar', length: 100, nullable: true })
   ctaLabel_fr: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   ctaTitle_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   ctaTitle_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   ctaTitle_fr: string;
 
   @Column({ type: 'text', nullable: true })
@@ -428,13 +428,13 @@ export class PodcastContent {
   @Column({ type: 'text', nullable: true })
   ctaDescription_fr: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   ctaHint_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   ctaHint_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   ctaHint_fr: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
@@ -456,13 +456,13 @@ export class PodcastContent {
   @Column({ type: 'varchar', length: 100, nullable: true })
   platformsLabel_fr: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   platformsTitle_pt: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   platformsTitle_en: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   platformsTitle_fr: string;
 
   @Column({ type: 'text', nullable: true })
