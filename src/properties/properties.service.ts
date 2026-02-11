@@ -312,7 +312,7 @@ export class PropertiesService {
       search,
       sortBy = '-createdAt',
       page = 1,
-      limit = 9,
+      limit = 15,
     } = filterPropertyDto;
 
     const queryBuilder = this.propertyRepository.createQueryBuilder('property');
