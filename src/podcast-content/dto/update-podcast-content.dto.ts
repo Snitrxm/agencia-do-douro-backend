@@ -185,6 +185,48 @@ export class UpdatePodcastContentDto {
   @MaxLength(100)
   hostLinkedInLabel_pt?: string;
 
+  // Seção Diretor de Produção
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  directorLabel_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  directorName?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  directorCredential_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  directorParagraph1_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  directorParagraph2_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  directorParagraph3_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  directorQuote_pt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  directorLinkedInUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  directorLinkedInLabel_pt?: string;
+
   // Seção Guests Header
   @IsOptional()
   @IsString()

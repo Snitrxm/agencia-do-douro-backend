@@ -297,6 +297,76 @@ export class PodcastContent {
   @Column({ type: 'varchar', length: 100, nullable: true })
   hostLinkedInLabel_fr: string;
 
+  // Seção Diretor de Produção
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  directorLabel_pt: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  directorLabel_en: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  directorLabel_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorName: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorCredential_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorCredential_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorCredential_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorParagraph1_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorParagraph1_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorParagraph1_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorParagraph2_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorParagraph2_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorParagraph2_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorParagraph3_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorParagraph3_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorParagraph3_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorQuote_pt: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorQuote_en: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorQuote_fr: string;
+
+  @Column({ type: 'text', nullable: true })
+  directorLinkedInUrl: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  directorLinkedInLabel_pt: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  directorLinkedInLabel_en: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  directorLinkedInLabel_fr: string;
+
   // Seção Guests Header
   @Column({ type: 'varchar', length: 100, nullable: true })
   guestsLabel_pt: string;

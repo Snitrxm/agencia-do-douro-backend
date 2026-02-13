@@ -29,6 +29,7 @@ export class SiteConfigController {
     FileFieldsInterceptor(
       [
         { name: 'apresentadoraImage', maxCount: 1 },
+        { name: 'diretorImage', maxCount: 1 },
         { name: 'podcastImagem', maxCount: 1 },
       ],
       {
@@ -53,6 +54,7 @@ export class SiteConfigController {
     @UploadedFiles()
     files: {
       apresentadoraImage?: Express.Multer.File[];
+      diretorImage?: Express.Multer.File[];
       podcastImagem?: Express.Multer.File[];
     },
   ) {
@@ -61,6 +63,13 @@ export class SiteConfigController {
         files.apresentadoraImage[0],
       );
       updateSiteConfigDto.apresentadoraImage = imageUrl.url;
+    }
+
+    if (files?.diretorImage && files.diretorImage.length > 0) {
+      const imageUrl = await this.uploadService.uploadImage(
+        files.diretorImage[0],
+      );
+      updateSiteConfigDto.diretorImage = imageUrl.url;
     }
 
     if (files?.podcastImagem && files.podcastImagem.length > 0) {

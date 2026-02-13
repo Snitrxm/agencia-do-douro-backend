@@ -61,5 +61,9 @@ export class UpdateSiteConfigDto {
 
   @IsOptional()
   @IsString()
+  diretorImage?: string;
+
+  @IsOptional()
+  @IsString()
   podcastImagem?: string;
 }

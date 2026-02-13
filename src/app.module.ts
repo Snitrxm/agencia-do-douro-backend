@@ -19,6 +19,8 @@ import { SellPropertyContentModule } from './sell-property-content/sell-property
 import { CultureItemsModule } from './culture-items/culture-items.module';
 import { ServiceItemsModule } from './service-items/service-items.module';
 import { DepoimentosModule } from './depoimentos/depoimentos.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -54,6 +56,8 @@ import { DepoimentosModule } from './depoimentos/depoimentos.module';
     CultureItemsModule,
     ServiceItemsModule,
     DepoimentosModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Body,
   Param,
   Delete,
@@ -11,6 +12,7 @@ import {
   BadRequestException,
   Patch,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { I18n, I18nContext } from 'nestjs-i18n';
@@ -38,7 +40,11 @@ import {
   CreatePropertyFractionColumnDto,
   UpdatePropertyFractionColumnDto,
 } from './dto/property-fraction-column.dto';
+import { SetResponsiblesDto } from './dto/set-responsibles.dto';
 import { UploadService } from '../upload/upload.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { v4 as uuidv4 } from 'uuid';
 
 @Controller('properties')
@@ -267,6 +273,29 @@ export class PropertiesController {
       message: 'Seção de imagens deletada com sucesso',
       section,
     };
+  }
+
+  // ==========================================
+  // Endpoints para gerenciar responsáveis
+  // ==========================================
+
+  @Get(':id/responsibles')
+  @UseGuards(JwtAuthGuard)
+  async getResponsibles(@Param('id') propertyId: string) {
+    return this.propertiesService.getResponsibles(propertyId);
+  }
+
+  @Put(':id/responsibles')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async setResponsibles(
+    @Param('id') propertyId: string,
+    @Body() setResponsiblesDto: SetResponsiblesDto,
+  ) {
+    return this.propertiesService.setResponsibles(
+      propertyId,
+      setResponsiblesDto.responsibles,
+    );
   }
 
   // ==========================================

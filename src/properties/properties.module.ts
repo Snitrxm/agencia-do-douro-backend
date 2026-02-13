@@ -7,6 +7,8 @@ import { PropertyImageSection } from './entities/property-image-section.entity';
 import { PropertyFile } from './entities/property-file.entity';
 import { PropertyFraction } from './entities/property-fraction.entity';
 import { PropertyFractionColumn } from './entities/property-fraction-column.entity';
+import { PropertyResponsible } from './entities/property-responsible.entity';
+import { User } from '../users/entities/user.entity';
 import { UploadModule } from '../upload/upload.module';
 import { TranslationModule } from '../translation/translation.module';
 
@@ -18,6 +20,8 @@ import { TranslationModule } from '../translation/translation.module';
       PropertyFile,
       PropertyFraction,
       PropertyFractionColumn,
+      PropertyResponsible,
+      User,
     ]),
     UploadModule,
     TranslationModule,

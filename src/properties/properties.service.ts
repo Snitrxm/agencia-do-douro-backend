@@ -6,6 +6,8 @@ import { PropertyImageSection } from './entities/property-image-section.entity';
 import { PropertyFile } from './entities/property-file.entity';
 import { PropertyFraction } from './entities/property-fraction.entity';
 import { PropertyFractionColumn } from './entities/property-fraction-column.entity';
+import { PropertyResponsible } from './entities/property-responsible.entity';
+import { User } from '../users/entities/user.entity';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { FilterPropertyDto } from './dto/filter-property.dto';
@@ -47,6 +49,10 @@ export class PropertiesService {
     private fractionRepository: Repository<PropertyFraction>,
     @InjectRepository(PropertyFractionColumn)
     private fractionColumnRepository: Repository<PropertyFractionColumn>,
+    @InjectRepository(PropertyResponsible)
+    private propertyResponsibleRepository: Repository<PropertyResponsible>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     private uploadService: UploadService,
     private translationService: TranslationService,
   ) {}
@@ -317,6 +323,10 @@ export class PropertiesService {
 
     const queryBuilder = this.propertyRepository.createQueryBuilder('property');
 
+    queryBuilder
+      .leftJoinAndSelect('property.responsibles', 'responsible')
+      .leftJoinAndSelect('responsible.user', 'responsibleUser');
+
     // Filtro de preço
     if (minPrice !== undefined && maxPrice !== undefined) {
       queryBuilder.andWhere('property.price BETWEEN :minPrice AND :maxPrice', {
@@ -472,7 +482,7 @@ export class PropertiesService {
     // Busca por texto (título e descrição)
     if (search) {
       queryBuilder.andWhere(
-        '(property.title LIKE :search OR property.description LIKE :search)',
+        '(property.title_pt LIKE :search OR property.description_pt LIKE :search)',
         { search: `%${search}%` },
       );
     }
@@ -510,7 +520,7 @@ export class PropertiesService {
     includeRelated: boolean = false,
     locale: string = 'pt',
   ): Promise<Property | null> {
-    const relations = ['imageSections', 'files', 'teamMember'];
+    const relations = ['imageSections', 'files', 'teamMember', 'responsibles'];
 
     if (includeRelated) {
       relations.push('relatedProperties');
@@ -885,6 +895,64 @@ export class PropertiesService {
       where: { propertyId },
       order: { displayOrder: 'ASC' },
     });
+  }
+
+  // ==========================================
+  // Métodos para gerenciar responsáveis
+  // ==========================================
+
+  async getResponsibles(propertyId: string): Promise<PropertyResponsible[]> {
+    return this.propertyResponsibleRepository.find({
+      where: { propertyId },
+      relations: ['user'],
+    });
+  }
+
+  async setResponsibles(
+    propertyId: string,
+    items: { userId: string; commissionPercentage: number }[],
+  ): Promise<PropertyResponsible[]> {
+    const property = await this.propertyRepository.findOne({
+      where: { id: propertyId },
+    });
+
+    if (!property) {
+      throw new BadRequestException(
+        `Propriedade com ID ${propertyId} não encontrada`,
+      );
+    }
+
+    if (items.length > 0) {
+      const userIds = items.map((i) => i.userId);
+      const users = await this.userRepository.find({
+        where: { id: In(userIds) },
+      });
+
+      if (users.length !== userIds.length) {
+        const foundIds = users.map((u) => u.id);
+        const notFoundIds = userIds.filter((id) => !foundIds.includes(id));
+        throw new BadRequestException(
+          `Utilizadores não encontrados: ${notFoundIds.join(', ')}`,
+        );
+      }
+    }
+
+    // Delete all existing responsibles for this property
+    await this.propertyResponsibleRepository.delete({ propertyId });
+
+    // Insert new ones
+    if (items.length > 0) {
+      const newResponsibles = items.map((item) =>
+        this.propertyResponsibleRepository.create({
+          propertyId,
+          userId: item.userId,
+          commissionPercentage: item.commissionPercentage,
+        }),
+      );
+      await this.propertyResponsibleRepository.save(newResponsibles);
+    }
+
+    return this.getResponsibles(propertyId);
   }
 
   // ==========================================

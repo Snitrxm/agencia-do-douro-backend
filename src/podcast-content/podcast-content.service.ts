@@ -80,6 +80,7 @@ export class PodcastContentService {
       'episode4Title', 'episode5Title', 'episode6Title',
       'hostLabel', 'hostDescription',
       'hostCredential', 'hostParagraph1', 'hostParagraph2', 'hostParagraph3', 'hostQuote', 'hostLinkedInLabel',
+      'directorLabel', 'directorCredential', 'directorParagraph1', 'directorParagraph2', 'directorParagraph3', 'directorQuote', 'directorLinkedInLabel',
       'guestsLabel', 'guestsTitle',
       'galleryLabel', 'galleryTitle', 'galleryDescription',
       'whyListenLabel', 'whyListenTitle', 'whyListenSubtitle',
@@ -124,6 +125,7 @@ export class PodcastContentService {
       'episode4Title', 'episode5Title', 'episode6Title',
       'hostLabel', 'hostDescription',
       'hostCredential', 'hostParagraph1', 'hostParagraph2', 'hostParagraph3', 'hostQuote', 'hostLinkedInLabel',
+      'directorLabel', 'directorCredential', 'directorParagraph1', 'directorParagraph2', 'directorParagraph3', 'directorQuote', 'directorLinkedInLabel',
       'guestsLabel', 'guestsTitle',
       'galleryLabel', 'galleryTitle', 'galleryDescription',
       'whyListenLabel', 'whyListenTitle', 'whyListenSubtitle',
@@ -145,6 +147,8 @@ export class PodcastContentService {
     transformed.episode6Url = content.episode6Url;
     transformed.hostName = content.hostName;
     transformed.hostLinkedInUrl = content.hostLinkedInUrl;
+    transformed.directorName = content.directorName;
+    transformed.directorLinkedInUrl = content.directorLinkedInUrl;
 
     transformed.id = content.id;
     transformed.createdAt = content.createdAt;

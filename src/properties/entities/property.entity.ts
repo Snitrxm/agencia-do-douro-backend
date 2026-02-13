@@ -14,6 +14,7 @@ import { PropertyImageSection } from './property-image-section.entity';
 import { PropertyFile } from './property-file.entity';
 import { PropertyFraction } from './property-fraction.entity';
 import { PropertyFractionColumn } from './property-fraction-column.entity';
+import { PropertyResponsible } from './property-responsible.entity';
 import { Newsletter } from '../../newsletters/entities/newsletter.entity';
 import { TeamMember } from '../../team-members/entities/team-member.entity';
 
@@ -208,6 +209,9 @@ export class Property {
   @ManyToOne(() => TeamMember, { nullable: true })
   @JoinColumn({ name: 'team_member_id' })
   teamMember: TeamMember;
+
+  @OneToMany(() => PropertyResponsible, (pr) => pr.property, { cascade: true })
+  responsibles: PropertyResponsible[];
 
   @CreateDateColumn()
   createdAt: Date;
