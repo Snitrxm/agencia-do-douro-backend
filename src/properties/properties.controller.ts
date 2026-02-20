@@ -68,10 +68,9 @@ export class PropertiesController {
     const buf = Buffer.from(await response.arrayBuffer());
     const jpeg = await sharp(buf)
       .resize(1200, 630, { fit: 'cover' })
-      .jpg({ quality: 80 })
       .toBuffer();
 
-    res.set('Content-Type', 'image/jpeg');
+    res.set('Content-Type', 'image/webp');
     res.set('Cache-Control', 'public, max-age=86400');
     res.send(jpeg);
   }
