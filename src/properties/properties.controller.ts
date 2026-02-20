@@ -13,7 +13,10 @@ import {
   Patch,
   NotFoundException,
   UseGuards,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
+import sharp from 'sharp';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { PropertiesService } from './properties.service';
@@ -53,6 +56,25 @@ export class PropertiesController {
     private readonly propertiesService: PropertiesService,
     private readonly uploadService: UploadService,
   ) {}
+
+
+  @Get('og-image')
+  public async OgImage(@Query('url') url: string, @Res() res: Response) {
+    if (!url) {
+      return res.status(400).send('Missing url parameter');
+    }
+
+    const response = await fetch(url);
+    const buf = Buffer.from(await response.arrayBuffer());
+    const jpeg = await sharp(buf)
+      .resize(1200, 630, { fit: 'cover' })
+      .jpeg({ quality: 80 })
+      .toBuffer();
+
+    res.set('Content-Type', 'image/jpeg');
+    res.set('Cache-Control', 'public, max-age=86400');
+    res.send(jpeg);
+  }
 
   @Post()
   @UseInterceptors(
