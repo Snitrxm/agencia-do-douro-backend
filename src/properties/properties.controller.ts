@@ -16,7 +16,8 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-import sharp from 'sharp';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const sharp = require('sharp') as typeof import('sharp').default;
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { PropertiesService } from './properties.service';
