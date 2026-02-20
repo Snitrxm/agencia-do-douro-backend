@@ -58,7 +58,6 @@ export class PropertiesController {
     private readonly uploadService: UploadService,
   ) {}
 
-
   @Get('og-image')
   public async OgImage(@Query('url') url: string, @Res() res: Response) {
     if (!url) {
@@ -69,7 +68,7 @@ export class PropertiesController {
     const buf = Buffer.from(await response.arrayBuffer());
     const jpeg = await sharp(buf)
       .resize(1200, 630, { fit: 'cover' })
-      .jpeg({ quality: 80 })
+      .jpg({ quality: 80 })
       .toBuffer();
 
     res.set('Content-Type', 'image/jpeg');
@@ -83,7 +82,9 @@ export class PropertiesController {
       limits: { fileSize: 200 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
         const isImage = file.mimetype.match(/^image\/(jpg|jpeg|png|gif|webp)$/);
-        const isVideo = file.mimetype.match(/^video\/(mp4|mpeg|quicktime|x-msvideo|x-matroska|webm)$/);
+        const isVideo = file.mimetype.match(
+          /^video\/(mp4|mpeg|quicktime|x-msvideo|x-matroska|webm)$/,
+        );
 
         if (!isImage && !isVideo) {
           return cb(
@@ -169,7 +170,9 @@ export class PropertiesController {
       limits: { fileSize: 200 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
         const isImage = file.mimetype.match(/^image\/(jpg|jpeg|png|gif|webp)$/);
-        const isVideo = file.mimetype.match(/^video\/(mp4|mpeg|quicktime|x-msvideo|x-matroska|webm)$/);
+        const isVideo = file.mimetype.match(
+          /^video\/(mp4|mpeg|quicktime|x-msvideo|x-matroska|webm)$/,
+        );
 
         if (!isImage && !isVideo) {
           return cb(
@@ -208,7 +211,9 @@ export class PropertiesController {
       limits: { fileSize: 200 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
         const isImage = file.mimetype.match(/^image\/(jpg|jpeg|png|gif|webp)$/);
-        const isVideo = file.mimetype.match(/^video\/(mp4|mpeg|quicktime|x-msvideo|x-matroska|webm)$/);
+        const isVideo = file.mimetype.match(
+          /^video\/(mp4|mpeg|quicktime|x-msvideo|x-matroska|webm)$/,
+        );
 
         if (!isImage && !isVideo) {
           return cb(
@@ -248,7 +253,9 @@ export class PropertiesController {
       limits: { fileSize: 200 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
         const isImage = file.mimetype.match(/^image\/(jpg|jpeg|png|gif|webp)$/);
-        const isVideo = file.mimetype.match(/^video\/(mp4|mpeg|quicktime|x-msvideo|x-matroska|webm)$/);
+        const isVideo = file.mimetype.match(
+          /^video\/(mp4|mpeg|quicktime|x-msvideo|x-matroska|webm)$/,
+        );
 
         if (!isImage && !isVideo) {
           return cb(
@@ -633,9 +640,7 @@ export class PropertiesController {
     );
 
     if (!fraction) {
-      throw new NotFoundException(
-        `Fração com ID ${fractionId} não encontrada`,
-      );
+      throw new NotFoundException(`Fração com ID ${fractionId} não encontrada`);
     }
 
     return fraction;
@@ -650,9 +655,7 @@ export class PropertiesController {
     const fraction = await this.propertiesService.deleteFraction(fractionId);
 
     if (!fraction) {
-      throw new NotFoundException(
-        `Fração com ID ${fractionId} não encontrada`,
-      );
+      throw new NotFoundException(`Fração com ID ${fractionId} não encontrada`);
     }
 
     return {
@@ -712,9 +715,7 @@ export class PropertiesController {
     );
 
     if (!column) {
-      throw new NotFoundException(
-        `Coluna com ID ${columnId} não encontrada`,
-      );
+      throw new NotFoundException(`Coluna com ID ${columnId} não encontrada`);
     }
 
     return column;
@@ -729,9 +730,7 @@ export class PropertiesController {
     const column = await this.propertiesService.deleteFractionColumn(columnId);
 
     if (!column) {
-      throw new NotFoundException(
-        `Coluna com ID ${columnId} não encontrada`,
-      );
+      throw new NotFoundException(`Coluna com ID ${columnId} não encontrada`);
     }
 
     return {
