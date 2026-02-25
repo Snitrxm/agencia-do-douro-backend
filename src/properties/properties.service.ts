@@ -1288,6 +1288,20 @@ export class PropertiesService {
   /**
    * Cria uma nova fração
    */
+  /**
+   * Retorna os IDs de todas as propriedades relacionadas a uma dada propriedade,
+   * em ambas as direções do join table (owner e inverse).
+   */
+  private async getAllRelatedPropertyIds(propertyId: string): Promise<string[]> {
+    const rows: { id: string }[] = await this.propertyRepository.query(
+      `SELECT related_property_id AS id FROM property_related_properties WHERE property_id = ?
+       UNION
+       SELECT property_id AS id FROM property_related_properties WHERE related_property_id = ?`,
+      [propertyId, propertyId],
+    );
+    return rows.map((r) => r.id);
+  }
+
   async createFraction(
     propertyId: string,
     createFractionDto: CreatePropertyFractionDto,
@@ -1300,7 +1314,21 @@ export class PropertiesService {
       ...createFractionDto,
     });
 
-    return this.fractionRepository.save(fraction);
+    const savedFraction = await this.fractionRepository.save(fraction);
+
+    // Replicar a fração para todas as propriedades relacionadas
+    const relatedIds = await this.getAllRelatedPropertyIds(propertyId);
+    if (relatedIds.length > 0) {
+      const replicas = relatedIds.map((relatedId) =>
+        this.fractionRepository.create({
+          propertyId: relatedId,
+          ...createFractionDto,
+        }),
+      );
+      await this.fractionRepository.save(replicas);
+    }
+
+    return savedFraction;
   }
 
   /**
@@ -1348,7 +1376,24 @@ export class PropertiesService {
       }),
     );
 
-    return this.fractionRepository.save(fractions);
+    const savedFractions = await this.fractionRepository.save(fractions);
+
+    // Replicar as frações para todas as propriedades relacionadas
+    const relatedIds = await this.getAllRelatedPropertyIds(propertyId);
+    if (relatedIds.length > 0) {
+      const replicas = relatedIds.flatMap((relatedId) =>
+        bulkCreateDto.fractions.map((fractionDto, index) =>
+          this.fractionRepository.create({
+            propertyId: relatedId,
+            ...fractionDto,
+            displayOrder: fractionDto.displayOrder ?? index,
+          }),
+        ),
+      );
+      await this.fractionRepository.save(replicas);
+    }
+
+    return savedFractions;
   }
 
   // ==========================================

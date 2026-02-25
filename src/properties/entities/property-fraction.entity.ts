@@ -68,6 +68,9 @@ export class PropertyFraction {
   grossArea: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  privateGrossArea: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   outdoorArea: number;
 
   @Column({ type: 'int', unsigned: true, default: 0 })

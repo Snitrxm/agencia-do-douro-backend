@@ -72,6 +72,11 @@ export class CreatePropertyFractionDto {
   @IsOptional()
   @IsNumber()
   @Min(0)
+  privateGrossArea?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
   outdoorArea?: number;
 
   @IsOptional()
@@ -163,6 +168,11 @@ export class UpdatePropertyFractionDto {
   @IsNumber()
   @Min(0)
   grossArea?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  privateGrossArea?: number;
 
   @IsOptional()
   @IsNumber()
