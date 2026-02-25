@@ -23,6 +23,10 @@ export class PropertyFraction {
   @JoinColumn({ name: 'propertyId' })
   property: Property;
 
+  // Nome da fração
+  @Column({ type: 'varchar', length: 200, nullable: true })
+  name: string;
+
   // Campos multilíngues - Natureza
   @Column({ type: 'varchar', length: 100, nullable: true })
   nature_pt: string;

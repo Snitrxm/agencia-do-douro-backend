@@ -11,6 +11,10 @@ import {
 import { Type } from 'class-transformer';
 
 export class CreatePropertyFractionDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
   // Campos multilíngues - Natureza
   @IsOptional()
   @IsString()
@@ -111,6 +115,10 @@ export class CreatePropertyFractionDto {
 }
 
 export class UpdatePropertyFractionDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
   // Campos multilíngues - Natureza
   @IsOptional()
   @IsString()
