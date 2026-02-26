@@ -8,6 +8,7 @@ import { NewslettersModule } from './newsletters/newsletters.module';
 import { SiteConfigModule } from './site-config/site-config.module';
 import { TeamMembersModule } from './team-members/team-members.module';
 import { DesiredZonesModule } from './desired-zones/desired-zones.module';
+import { CountryConfigsModule } from './country-configs/country-configs.module';
 import { PodcastTopicsModule } from './podcast-topics/podcast-topics.module';
 import { PodcastContentModule } from './podcast-content/podcast-content.module';
 import { PodcastGuestsModule } from './podcast-guests/podcast-guests.module';
@@ -45,6 +46,7 @@ import { AuthModule } from './auth/auth.module';
     SiteConfigModule,
     TeamMembersModule,
     DesiredZonesModule,
+    CountryConfigsModule,
     PodcastTopicsModule,
     PodcastContentModule,
     PodcastGuestsModule,
