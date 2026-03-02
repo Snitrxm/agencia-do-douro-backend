@@ -64,9 +64,6 @@ export class UpdatePropertyDto {
 
   @IsString({ message: 'O estado do imóvel deve ser uma string' })
   @IsOptional()
-  @IsEnum(['novo', 'usado', 'renovado'], {
-    message: 'O estado do imóvel deve ser: novo, usado ou renovado',
-  })
   propertyState?: string;
 
   @IsString({ message: 'A classe energética deve ser uma string' })
