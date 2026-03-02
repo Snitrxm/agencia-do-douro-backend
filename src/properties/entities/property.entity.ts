@@ -64,7 +64,7 @@ export class Property {
 
   @Column({
     type: 'enum',
-    enum: ['novo', 'usado', 'renovado'],
+    enum: ['novo', 'usado', 'renovado', 'em-construcao'],
     nullable: true,
   })
   propertyState: string;
