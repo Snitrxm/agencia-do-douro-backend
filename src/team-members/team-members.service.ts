@@ -51,10 +51,12 @@ export class TeamMembersService {
 
   async remove(id: string): Promise<void> {
     const teamMember = await this.findOne(id);
-    await this.propertyRepository.update(
-      { teamMember: { id } },
-      { teamMember: null },
-    );
+    await this.propertyRepository
+      .createQueryBuilder()
+      .update()
+      .set({ teamMember: null as any })
+      .where('team_member_id = :id', { id })
+      .execute();
     await this.teamMemberRepository.remove(teamMember);
   }
 }
