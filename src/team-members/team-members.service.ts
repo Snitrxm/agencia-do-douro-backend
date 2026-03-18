@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TeamMember } from './entities/team-member.entity';
+import { Property } from '../properties/entities/property.entity';
 import { CreateTeamMemberDto } from './dto/create-team-member.dto';
 import { UpdateTeamMemberDto } from './dto/update-team-member.dto';
 
@@ -10,6 +11,8 @@ export class TeamMembersService {
   constructor(
     @InjectRepository(TeamMember)
     private teamMemberRepository: Repository<TeamMember>,
+    @InjectRepository(Property)
+    private propertyRepository: Repository<Property>,
   ) {}
 
   async create(createTeamMemberDto: CreateTeamMemberDto): Promise<TeamMember> {
@@ -48,6 +51,10 @@ export class TeamMembersService {
 
   async remove(id: string): Promise<void> {
     const teamMember = await this.findOne(id);
+    await this.propertyRepository.update(
+      { teamMember: { id } },
+      { teamMember: null },
+    );
     await this.teamMemberRepository.remove(teamMember);
   }
 }
