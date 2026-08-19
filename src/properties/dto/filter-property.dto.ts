@@ -60,7 +60,11 @@ export class FilterPropertyDto {
     message: 'O filtro de empreendimento deve ser verdadeiro ou falso',
   })
   @IsOptional()
-  @Type(() => Boolean)
+  @Transform(({ value }) => {
+    if (value === 'true' || value === true) return true;
+    if (value === 'false' || value === false) return false;
+    return undefined;
+  })
   isEmpreendimento?: boolean;
 
   // Filtros de localização

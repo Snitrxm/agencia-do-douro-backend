@@ -487,11 +487,19 @@ export class PropertiesService {
       );
     }
 
+    // Na aba "Comprar", mostrar imóveis normais primeiro e empreendimentos depois
+    if (transactionType === 'comprar' && isEmpreendimento !== true) {
+      queryBuilder.addOrderBy('property.isEmpreendimento', 'ASC');
+    }
+
     // Ordenação
     if (sortBy) {
       const isDescending = sortBy.startsWith('-');
       const field = isDescending ? sortBy.slice(1) : sortBy;
-      queryBuilder.orderBy(`property.${field}`, isDescending ? 'DESC' : 'ASC');
+      queryBuilder.addOrderBy(
+        `property.${field}`,
+        isDescending ? 'DESC' : 'ASC',
+      );
     }
 
     // Paginação
